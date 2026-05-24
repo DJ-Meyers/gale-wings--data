@@ -78,4 +78,6 @@ export {
   championsPokemonWithModifiersSchema,
   looseChampionsPokemonSchema,
   pokemonModifiersSchema,
+  statusSchema,
+  teraTypeSchema,
 }

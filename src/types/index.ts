@@ -1,3 +1,4 @@
+export * from './champions'
 export * from './field-conditions'
 export * from './parser'
 export * from './pokemon'

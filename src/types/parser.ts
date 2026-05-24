@@ -1,17 +1,26 @@
+import type {
+  ChampionsItem,
+  ChampionsMove,
+  ChampionsSpecies,
+  ParseableAbility,
+  StatAlignment,
+  Status,
+  TeraType,
+} from './champions'
 import type { FieldConditions } from './field-conditions'
 import type { StatBoosts, StatPoints } from './stats'
 
 export interface ParseResult {
-  species?: string
-  move?: string
-  statAlignment?: string
-  ability?: string
-  item?: string
+  species?: ChampionsSpecies
+  move?: ChampionsMove
+  statAlignment?: StatAlignment
+  ability?: ParseableAbility
+  item?: ChampionsItem
   statPoints?: Partial<StatPoints>
   level?: number
-  teraType?: string
+  teraType?: TeraType
   statBoosts?: Partial<StatBoosts>
-  status?: string
+  status?: Status
   isCrit?: boolean
   abilityOn?: boolean
   boostedStat?: string
