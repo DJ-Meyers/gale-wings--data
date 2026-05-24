@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": false,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["../server/src/*"],
+      "@dj-meyers/galewings/schemas": ["./src/schemas/index.ts"],
+      "@dj-meyers/galewings/types": ["./src/types/index.ts"]
+    }
+  },
+  "include": ["src", "../server/src/**/*.ts"]
+}
