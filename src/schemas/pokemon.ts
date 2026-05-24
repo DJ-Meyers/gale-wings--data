@@ -42,13 +42,7 @@ const teraTypeSchema = z.literal([
 ])
 
 const statusSchema = z.literal([
-  'healthy',
-  'poisoned',
-  'badly-poisoned',
-  'burned',
-  'paralyzed',
-  'asleep',
-  'frozen',
+  '', 'slp', 'psn', 'brn', 'frz', 'par', 'tox',
 ])
 
 const pokemonModifiersSchema = z.object({
