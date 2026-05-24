@@ -2,6 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
+    'constants/index': 'src/constants/index.ts',
     schemas: 'src/schemas/index.ts',
     'types/index': 'src/types/index.ts',
     router: 'src/router.ts',
