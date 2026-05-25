@@ -37,3 +37,76 @@ export type ParseableAbility =
   | ParadoxAbility
   | RuinAbility
   | LegendaryWeatherAbility
+
+// Alias targets enumerated as pure string literal unions (rather than
+// extending ChampionsSpecies / ChampionsItem) because the @pkmn-derived
+// inferred types are branded nominal types (SpeciesName / ItemName), so
+// a `ChampionsSpecies | 'Foo'` union would fall back to the brand and
+// not narrow assignments of bare string literals.
+//
+// These cover every target in SPECIES_ALIASES / ITEM_ALIASES in
+// packages/server/src/parser/constants.ts, including roster-expansion
+// candidates that are currently OOP (see project_champions_evolves
+// memory) — the parser drops OOP targets at runtime through the
+// speciesById / itemById lookup filter added in PR5. The literal union
+// here documents intent; the use site narrows back to the strict
+// ChampionsSpecies / ChampionsItem brand via the map lookup result.
+export type SpeciesAliasTarget =
+  | 'Blissey'
+  | 'Calyrex-Ice'
+  | 'Calyrex-Shadow'
+  | 'Charizard'
+  | 'Clefable'
+  | 'Corviknight'
+  | 'Cresselia'
+  | 'Deoxys-Attack'
+  | 'Deoxys-Speed'
+  | 'Dragapult'
+  | 'Ferrothorn'
+  | 'Flutter Mane'
+  | 'Garchomp'
+  | 'Gardevoir'
+  | 'Gholdengo'
+  | 'Gouging Fire'
+  | 'Great Tusk'
+  | 'Hippowdon'
+  | 'Incineroar'
+  | 'Iron Bundle'
+  | 'Iron Hands'
+  | 'Iron Moth'
+  | 'Iron Treads'
+  | 'Iron Valiant'
+  | 'Kingambit'
+  | 'Landorus-Incarnate'
+  | 'Landorus-Therian'
+  | 'Ogerpon'
+  | 'Raging Bolt'
+  | 'Rillaboom'
+  | 'Roaring Moon'
+  | 'Salamence'
+  | 'Skarmory'
+  | 'Swampert'
+  | 'Tapu Bulu'
+  | 'Tapu Fini'
+  | 'Tapu Koko'
+  | 'Tapu Lele'
+  | 'Thundurus-Therian'
+  | 'Tornadus-Therian'
+  | 'Toxapex'
+  | 'Tyranitar'
+  | 'Ursaluna-Bloodmoon'
+  | 'Walking Wake'
+  | 'Weavile'
+
+export type ItemAliasTarget =
+  | 'Assault Vest'
+  | 'Choice Band'
+  | 'Choice Scarf'
+  | 'Choice Specs'
+  | 'Eviolite'
+  | 'Focus Sash'
+  | 'Heavy-Duty Boots'
+  | 'Leftovers'
+  | 'Life Orb'
+  | 'Lum Berry'
+  | 'Sitrus Berry'
