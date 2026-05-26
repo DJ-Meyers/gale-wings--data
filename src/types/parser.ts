@@ -28,21 +28,18 @@ export interface ParsedPokemon {
   fieldConditions?: FieldConditions
 }
 
-export interface ParseSchemaError {
-  path: string
-  message: string
-}
+export type ParseError =
+  | { kind: 'schema'; path: string; message: string }
+  | { kind: 'unmatched'; token: string }
 
 /**
  * Full result of a single parse pass.
  * - `pokemon`: the parsed entity fields (always present; may be partial)
- * - `errors`: schema-validation issues (empty when parse is Champions-legal,
- *   or when essential fields like species/ability are still missing)
- * - `unmatched`: input tokens the parser didn't recognize
+ * - `errors`: combined list of schema-validation issues and unrecognized tokens,
+ *   tagged via the `kind` discriminator
  */
 export interface ParseInputResult {
   pokemon: ParsedPokemon
-  errors: ParseSchemaError[]
-  unmatched: string[]
+  errors: ParseError[]
 }
 
