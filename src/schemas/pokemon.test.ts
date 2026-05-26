@@ -13,13 +13,13 @@ const baseIncineroar = {
 }
 
 describe('championsPokemonSchema(Incineroar)', () => {
-  it('accepts a fully valid Incineroar', () => {
+  it('should accept a fully valid Incineroar', () => {
     const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse(baseIncineroar)
     expect(result.success).toBe(true)
   })
 
   it.each(['Flare Blitz', 'Fake Out', 'Hyper Beam'])(
-    'accepts %s in moves (Incineroar can learn it)',
+    'should accept %s in moves (Incineroar can learn it)',
     (move) => {
       const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
         ...baseIncineroar,
@@ -30,7 +30,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   )
 
   it.each(['U-turn', 'Knock Off'])(
-    'rejects %s in moves (removed from Incineroar in Champions)',
+    'should reject %s in moves (removed from Incineroar in Champions)',
     (move) => {
       const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
         ...baseIncineroar,
@@ -40,7 +40,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
     },
   )
 
-  it('rejects an ability that exists in Champions but not on Incineroar', () => {
+  it('should reject an ability that exists in Champions but not on Incineroar', () => {
     // Swift Swim is a real Champions ability (Basculegion has it),
     // but Incineroar gets Blaze/Intimidate only.
     const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
@@ -50,7 +50,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects a species mismatch in the parsed object', () => {
+  it('should reject a species mismatch in the parsed object', () => {
     const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
       ...baseIncineroar,
       species: 'Basculegion',
@@ -58,7 +58,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects duplicate moves', () => {
+  it('should reject duplicate moves', () => {
     const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
       ...baseIncineroar,
       moves: ['Flare Blitz', 'Flare Blitz'],
@@ -66,7 +66,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
     expect(result.success).toBe(false)
   })
 
-  it('accepts an empty moves array', () => {
+  it('should accept an empty moves array', () => {
     const result = championsPokemonSchema('Incineroar' as ChampionsSpeciesName).safeParse({
       ...baseIncineroar,
       moves: [],
@@ -76,7 +76,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
 })
 
 describe('looseChampionsPokemonSchema', () => {
-  it('accepts Incineroar with an ability it does NOT actually have', () => {
+  it('should accept Incineroar with an ability it does NOT actually have', () => {
     // The point of "loose": validates each field is from the Champions pool,
     // but does NOT enforce per-species relationships.
     // Swift Swim is a legal Champions ability (Basculegion has it) but not on Incineroar.
@@ -87,7 +87,7 @@ describe('looseChampionsPokemonSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects a non-Champions species', () => {
+  it('should reject a non-Champions species', () => {
     const result = looseChampionsPokemonSchema.safeParse({
       ...baseIncineroar,
       species: 'Mewtwo',
@@ -95,7 +95,7 @@ describe('looseChampionsPokemonSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects a non-Champions item', () => {
+  it('should reject a non-Champions item', () => {
     const result = looseChampionsPokemonSchema.safeParse({
       ...baseIncineroar,
       item: 'Assault Vest',
@@ -103,7 +103,7 @@ describe('looseChampionsPokemonSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects a non-Champions move (even if no species enforced)', () => {
+  it('should reject a non-Champions move (even if no species enforced)', () => {
     const result = looseChampionsPokemonSchema.safeParse({
       ...baseIncineroar,
       moves: ['Happy Hour'],
