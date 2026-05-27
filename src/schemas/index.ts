@@ -4,6 +4,7 @@ export {
   championsItemsSchema,
   championsMovesSchema,
   championsSpeciesNameSchema,
+  type ChampionsSpeciesName,
 } from './champions'
 export {
   championsDex,
