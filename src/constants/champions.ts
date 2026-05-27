@@ -69,23 +69,43 @@ export const championsLegalMoves: string[] = [
 ]
 
 /**
- * Return the effective learnset for a species, walking up to the base species
- * when the form (mega, regional, gender-locked) doesn't carry its own. The
- * Champions dex doesn't duplicate learnsets onto every forme — `Learnsets[
- * "charizardmegay"]` is missing while `Learnsets["charizard"]` is populated,
- * so per-species schemas built off `species.id` directly would degrade to an
- * empty literal union and throw at construction.
+ * Threshold separating "additive delta" formes (Rotom appliance: 1 move each)
+ * from "standalone learnset" formes (Alolan/Galarian/Hisuian/Paldean variants
+ * and gender forms: 41+ moves each). The Champions dex has no entries in
+ * between, so any low value safely partitions; 5 leaves margin for future
+ * additive formes that carry a handful of signature moves.
+ */
+const ADDITIVE_FORME_LEARNSET_MAX = 5
+
+/**
+ * Return the effective learnset for a species. The Champions dex stores
+ * formes in three distinct shapes:
+ *   - Empty own (megas, Origin, battle-only formes like Cramorant-Gulping):
+ *     learnset comes entirely from the base species.
+ *   - Tiny own (Rotom-Wash/Heat/Frost/Fan/Mow — 1 signature move each):
+ *     additive delta on top of base; merge own ∪ base.
+ *   - Substantial own (Alolan/Galarian/Hisuian/Paldean variants, gender
+ *     forms): a standalone learnset distinct from base; use own as-is.
+ *     Merging here would let Alolan Ninetales learn Flamethrower.
+ * Without this routing, per-species schemas built off `species.id` directly
+ * would either degrade to an empty union (megas) or to a one-move union
+ * (Rotom forms), rejecting most legal spreads on those forms.
  */
 export const championsEffectiveLearnset = (
   species: Species,
 ): Record<string, string[]> => {
-  const own = championsDex.data.Learnsets?.[species.id]?.learnset
-  if (own && Object.keys(own).length > 0) return own
-  if (species.baseSpecies && species.baseSpecies !== species.name) {
+  const own = championsDex.data.Learnsets?.[species.id]?.learnset ?? {}
+  const isAdditiveForme = Object.keys(own).length < ADDITIVE_FORME_LEARNSET_MAX
+  if (
+    isAdditiveForme &&
+    species.baseSpecies &&
+    species.baseSpecies !== species.name
+  ) {
     const baseId = championsDex.species.get(species.baseSpecies)?.id
     if (baseId) {
-      return championsDex.data.Learnsets?.[baseId]?.learnset ?? {}
+      const base = championsDex.data.Learnsets?.[baseId]?.learnset ?? {}
+      return { ...base, ...own }
     }
   }
-  return own ?? {}
+  return own
 }
