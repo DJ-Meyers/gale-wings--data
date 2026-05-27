@@ -1,5 +1,6 @@
 export {
   championsDex,
+  championsEffectiveLearnset,
   championsLegalAbilities,
   championsLegalItems,
   championsLegalMoves,

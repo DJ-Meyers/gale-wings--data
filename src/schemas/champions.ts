@@ -3,6 +3,7 @@ import z from 'zod'
 
 import {
   championsDex,
+  championsEffectiveLearnset,
   championsLegalAbilities,
   championsLegalItems,
   championsLegalMoves,
@@ -26,7 +27,10 @@ const championsSpeciesAbilitiesSchema = (species: Species) =>
 const championsAbilitiesSchema = z.literal([...championsLegalAbilities])
 
 const championsSpeciesMovesSchema = (species: Species) => {
-  const learnset = championsDex.data.Learnsets?.[species.id]?.learnset ?? {}
+  // Walk up to the base species for formes without their own learnset
+  // (megas, regional variants) — otherwise this collapses to z.literal([]),
+  // which Zod rejects with "Cannot create literal schema with no valid values".
+  const learnset = championsEffectiveLearnset(species)
   const names: string[] = Object.keys(learnset)
     .map((id) => championsDex.moves.get(id)?.name as string | undefined)
     .filter((n): n is string => n != null)

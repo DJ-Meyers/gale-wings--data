@@ -67,3 +67,25 @@ export const championsLegalMoves: string[] = [
       .filter((n): n is string => n != null),
   ),
 ]
+
+/**
+ * Return the effective learnset for a species, walking up to the base species
+ * when the form (mega, regional, gender-locked) doesn't carry its own. The
+ * Champions dex doesn't duplicate learnsets onto every forme — `Learnsets[
+ * "charizardmegay"]` is missing while `Learnsets["charizard"]` is populated,
+ * so per-species schemas built off `species.id` directly would degrade to an
+ * empty literal union and throw at construction.
+ */
+export const championsEffectiveLearnset = (
+  species: Species,
+): Record<string, string[]> => {
+  const own = championsDex.data.Learnsets?.[species.id]?.learnset
+  if (own && Object.keys(own).length > 0) return own
+  if (species.baseSpecies && species.baseSpecies !== species.name) {
+    const baseId = championsDex.species.get(species.baseSpecies)?.id
+    if (baseId) {
+      return championsDex.data.Learnsets?.[baseId]?.learnset ?? {}
+    }
+  }
+  return own ?? {}
+}
