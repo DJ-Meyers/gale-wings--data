@@ -12,6 +12,10 @@
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants/index.js"
     },
+    "./dex": {
+      "types": "./dist/dex.d.ts",
+      "import": "./dist/dex.js"
+    },
     "./schemas": {
       "types": "./dist/schemas.d.ts",
       "import": "./dist/schemas.js"

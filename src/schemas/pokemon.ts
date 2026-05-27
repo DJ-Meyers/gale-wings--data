@@ -1,12 +1,13 @@
 import { z } from 'zod'
 
+import { getSpecies } from '../dex'
 import { statAlignmentSchema, statBoostsSchema, statPointsSchema } from './stats'
-import { championsAbilitiesSchema, championsDex, championsItemsSchema, championsMovesSchema, championsSpeciesAbilitiesSchema, championsSpeciesMovesSchema, championsSpeciesNameSchema, type ChampionsSpeciesName, } from './champions';
+import { championsAbilitiesSchema, championsItemsSchema, championsMovesSchema, championsSpeciesAbilitiesSchema, championsSpeciesMovesSchema, championsSpeciesNameSchema, type ChampionsSpeciesName, } from './champions';
 import { uniqueArraySchema } from './utils';
 
 
 const championsPokemonSchema = (speciesName: ChampionsSpeciesName) => {
-  const species = championsDex.species.get(speciesName);
+  const species = getSpecies(speciesName);
   return z.object({
     species: z.literal(speciesName),
     statAlignment: statAlignmentSchema,
@@ -73,7 +74,6 @@ const looseChampionsPokemonSchema = z.object({
 })
 
 export {
-  championsDex,
   championsPokemonSchema,
   championsPokemonWithModifiersSchema,
   looseChampionsPokemonSchema,

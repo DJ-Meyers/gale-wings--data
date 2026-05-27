@@ -11,6 +11,7 @@
     "paths": {
       "~/*": ["../server/src/*"],
       "@dj-meyers/galewings/constants": ["./src/constants/index.ts"],
+      "@dj-meyers/galewings/dex": ["./src/dex.ts"],
       "@dj-meyers/galewings/schemas": ["./src/schemas/index.ts"],
       "@dj-meyers/galewings/types": ["./src/types/index.ts"]
     }
