@@ -1,16 +1,20 @@
 import { z } from 'zod'
 
 const attackerSideSchema = z.object({
-  helpingHand: z.boolean().optional(),
-  tailwind: z.boolean().optional(),
+  isHelpingHand: z.boolean().optional(),
+  isTailwind: z.boolean().optional(),
+  isFlowerGift: z.boolean().optional(),
+  isPowerSpot: z.boolean().optional(),
+  isBattery: z.boolean().optional(),
 })
 
 const defenderSideSchema = z.object({
-  reflect: z.boolean().optional(),
-  lightScreen: z.boolean().optional(),
-  auroraVeil: z.boolean().optional(),
-  friendGuard: z.boolean().optional(),
-  tailwind: z.boolean().optional(),
+  isReflect: z.boolean().optional(),
+  isLightScreen: z.boolean().optional(),
+  isAuroraVeil: z.boolean().optional(),
+  isFriendGuard: z.boolean().optional(),
+  isTailwind: z.boolean().optional(),
+  isProtected: z.boolean().optional(),
 })
 
 const weatherSchema = z.literal([
@@ -24,17 +28,18 @@ const weatherSchema = z.literal([
   'Strong Winds',
 ])
 const terrainSchema = z.literal(['Electric', 'Grassy', 'Psychic', 'Misty'])
-const ruinAbilitiesSchema = z.object({
-  beads: z.boolean().optional(),
-  sword: z.boolean().optional(),
-  tablets: z.boolean().optional(),
-  vessel: z.boolean().optional(),
-})
 
 const fieldConditionsSchema = z.object({
+  gameType: z.literal(['Singles', 'Doubles']).default('Doubles'),
   weather: weatherSchema.optional(),
   terrain: terrainSchema.optional(),
-  ruinAbilities: ruinAbilitiesSchema.optional(),
+  isGravity: z.boolean().optional(),
+  isMagicRoom: z.boolean().optional(),
+  isWonderRoom: z.boolean().optional(),
+  isBeadsOfRuin: z.boolean().optional(),
+  isSwordOfRuin: z.boolean().optional(),
+  isTabletsOfRuin: z.boolean().optional(),
+  isVesselOfRuin: z.boolean().optional(),
   attackerSide: attackerSideSchema.optional(),
   defenderSide: defenderSideSchema.optional(),
 })
