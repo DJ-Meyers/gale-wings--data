@@ -13,8 +13,17 @@ const defenderSideSchema = z.object({
   tailwind: z.boolean().optional(),
 })
 
-const weatherSchema = z.literal(['sun', 'rain', 'sand', 'snow', 'hail'])
-const terrainSchema = z.literal(['electric', 'grassy', 'psychic', 'misty'])
+const weatherSchema = z.literal([
+  'Sun',
+  'Rain',
+  'Sand',
+  'Snow',
+  'Hail',
+  'Harsh Sunshine',
+  'Heavy Rain',
+  'Strong Winds',
+])
+const terrainSchema = z.literal(['Electric', 'Grassy', 'Psychic', 'Misty'])
 const ruinAbilitiesSchema = z.object({
   beads: z.boolean().optional(),
   sword: z.boolean().optional(),

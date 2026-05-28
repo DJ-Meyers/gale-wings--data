@@ -10,18 +10,14 @@ import {
   championsSpeciesMovesSchema,
   championsSpeciesNameSchema,
 } from './champions'
-import {
-  statAlignmentSchema,
-  statBoostsSchema,
-  statPointsSchema,
-} from './stats'
+import { boostsSchema, natureSchema, statPointsSchema } from './stats'
 import { uniqueArraySchema } from './utils'
 
 const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
   const species = getSpecies(speciesName)
   return z.object({
     species: z.literal(speciesName),
-    statAlignment: statAlignmentSchema,
+    nature: natureSchema,
     ability: championsSpeciesAbilitiesSchema(species),
     item: championsItemsSchema.optional(),
     statPoints: statPointsSchema,
@@ -31,32 +27,33 @@ const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
 
 const teraTypeSchema = z.literal([
   '',
-  'normal',
-  'fire',
-  'water',
-  'grass',
-  'electric',
-  'ice',
-  'fighting',
-  'poison',
-  'ground',
-  'flying',
-  'psychic',
-  'bug',
-  'rock',
-  'ghost',
-  'dragon',
-  'dark',
-  'steel',
-  'fairy',
-  'stellar',
+  'Normal',
+  'Fire',
+  'Water',
+  'Grass',
+  'Electric',
+  'Ice',
+  'Fighting',
+  'Poison',
+  'Ground',
+  'Flying',
+  'Psychic',
+  'Bug',
+  'Rock',
+  'Ghost',
+  'Dragon',
+  'Dark',
+  'Steel',
+  'Fairy',
+  'Stellar',
+  '???',
 ])
 
 const statusSchema = z.literal(['', 'slp', 'psn', 'brn', 'frz', 'par', 'tox'])
 
 const pokemonModifiersSchema = z.object({
   teraType: teraTypeSchema,
-  statBoosts: statBoostsSchema,
+  boosts: boostsSchema,
   status: statusSchema,
   isCrit: z.boolean(),
   abilityOn: z.boolean(),
@@ -75,7 +72,7 @@ const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) =>
 // championsPokemonSchema(opponent.species) inside handlers for full strict validation.
 const looseChampionsPokemonSchema = z.object({
   species: championsSpeciesNameSchema,
-  statAlignment: statAlignmentSchema,
+  nature: natureSchema,
   ability: championsAbilitiesSchema,
   item: championsItemsSchema.optional(),
   statPoints: statPointsSchema,

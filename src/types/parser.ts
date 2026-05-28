@@ -2,25 +2,25 @@ import type {
   ChampionsItem,
   ChampionsMove,
   ChampionsSpecies,
+  Nature,
   ParseableAbility,
-  StatAlignment,
   Status,
   TeraType,
 } from './champions'
 import type { FieldConditions } from './field-conditions'
-import type { StatBoosts, StatPoints } from './stats'
+import type { Boosts, StatPoints } from './stats'
 
 /** The pokemon-shaped fields a parser pass produces. Always populated; may be partial. */
 export interface ParsedPokemon {
   species?: ChampionsSpecies
   move?: ChampionsMove
-  statAlignment?: StatAlignment
+  nature?: Nature
   ability?: ParseableAbility
   item?: ChampionsItem
   statPoints?: Partial<StatPoints>
   level?: number
   teraType?: TeraType
-  statBoosts?: Partial<StatBoosts>
+  boosts?: Partial<Boosts>
   status?: Status
   isCrit?: boolean
   abilityOn?: boolean

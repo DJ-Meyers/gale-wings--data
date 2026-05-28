@@ -4,7 +4,7 @@ import { championsPokemonSchema, looseChampionsPokemonSchema } from './pokemon'
 
 const baseIncineroar = {
   species: 'Incineroar',
-  statAlignment: 'jolly',
+  nature: 'Jolly',
   ability: 'Intimidate',
   item: 'Choice Scarf',
   statPoints: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },

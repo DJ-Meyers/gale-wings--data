@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  statAlignmentSchema,
-  statBoostsSchema,
+  boostsSchema,
+  natureSchema,
   statKeySchema,
+  statKeyWithoutHpSchema,
   statPointsSchema,
 } from './stats'
 
@@ -17,6 +18,16 @@ describe('statKeySchema', () => {
 
   it.each(['special', 'speed', 'HP', 'foo'])('should reject %s', (k) => {
     expect(statKeySchema.safeParse(k).success).toBe(false)
+  })
+})
+
+describe('statKeyWithoutHpSchema', () => {
+  it.each(['atk', 'def', 'spa', 'spd', 'spe'])('should accept %s', (k) => {
+    expect(statKeyWithoutHpSchema.safeParse(k).success).toBe(true)
+  })
+
+  it('should reject hp', () => {
+    expect(statKeyWithoutHpSchema.safeParse('hp').success).toBe(false)
   })
 })
 
@@ -91,47 +102,47 @@ describe('statPointsSchema', () => {
   })
 })
 
-describe('statBoostsSchema', () => {
-  const fullZero = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+describe('boostsSchema', () => {
+  const fullZero = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
 
   it.each([-6, -3, 0, 3, 6])('should accept in-range boost %d', (v) => {
-    expect(statBoostsSchema.safeParse({ ...fullZero, atk: v }).success).toBe(
-      true,
-    )
+    expect(boostsSchema.safeParse({ ...fullZero, atk: v }).success).toBe(true)
   })
 
   it.each([-7, 7, 99])('should reject out-of-range boost %d', (v) => {
-    expect(statBoostsSchema.safeParse({ ...fullZero, atk: v }).success).toBe(
-      false,
-    )
+    expect(boostsSchema.safeParse({ ...fullZero, atk: v }).success).toBe(false)
   })
 
   it('should reject a non-integer boost', () => {
-    expect(statBoostsSchema.safeParse({ ...fullZero, atk: 1.5 }).success).toBe(
+    expect(boostsSchema.safeParse({ ...fullZero, atk: 1.5 }).success).toBe(
       false,
     )
   })
+
+  it('should reject an hp key (HP is not boostable)', () => {
+    expect(boostsSchema.safeParse({ ...fullZero, hp: 0 }).success).toBe(false)
+  })
 })
 
-describe('statAlignmentSchema', () => {
-  it.each(['serious', 'adamant', 'jolly', 'modest', 'timid'])(
+describe('natureSchema', () => {
+  it.each(['Serious', 'Adamant', 'Jolly', 'Modest', 'Timid'])(
     'should accept nature %s',
     (n) => {
-      expect(statAlignmentSchema.safeParse(n).success).toBe(true)
+      expect(natureSchema.safeParse(n).success).toBe(true)
     },
   )
 
-  it.each(['Adamant', 'invalid', 'hardy'])(
+  it.each(['adamant', 'invalid', 'Hardy'])(
     'should reject non-nature %s',
     (n) => {
-      expect(statAlignmentSchema.safeParse(n).success).toBe(false)
+      expect(natureSchema.safeParse(n).success).toBe(false)
     },
   )
 
-  it('should default to "serious" when undefined', () => {
+  it('should default to "Serious" when undefined', () => {
     // Zod treats an explicit `undefined` as the trigger for its default value,
     // which `parse()` with no args does not — keep the explicit `undefined`.
     // eslint-disable-next-line unicorn/no-useless-undefined
-    expect(statAlignmentSchema.parse(undefined)).toBe('serious')
+    expect(natureSchema.parse(undefined)).toBe('Serious')
   })
 })

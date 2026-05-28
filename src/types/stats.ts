@@ -1,8 +1,8 @@
 import type { z } from 'zod'
 
-import type { statBoostsSchema, statPointsSchema } from '~/schemas/stats'
+import type { boostsSchema, statPointsSchema } from '~/schemas/stats'
 
 export type StatPoints = z.infer<typeof statPointsSchema>
-export type StatBoosts = z.infer<typeof statBoostsSchema>
+export type Boosts = z.infer<typeof boostsSchema>
 
 export type StatKey = keyof StatPoints

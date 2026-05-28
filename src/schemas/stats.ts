@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 const statKeySchema = z.literal(['hp', 'atk', 'def', 'spa', 'spd', 'spe'])
 
+const statKeyWithoutHpSchema = z.literal(['atk', 'def', 'spa', 'spd', 'spe'])
+
 const statPointValueSchema = z.number().int().min(0).max(32).default(0)
 
 const statPointsSchema = z
@@ -12,37 +14,38 @@ const statPointsSchema = z
 
 const statBoostValueSchema = z.number().int().min(-6).max(6).default(0)
 
-const statBoostsSchema = z.record(statKeySchema, statBoostValueSchema)
+const boostsSchema = z.record(statKeyWithoutHpSchema, statBoostValueSchema)
 
-const statAlignmentSchema = z
+const natureSchema = z
   .literal([
-    'serious',
-    'lonely',
-    'adamant',
-    'naughty',
-    'brave', // +Atk
-    'bold',
-    'impish',
-    'lax',
-    'relaxed', // +Def
-    'modest',
-    'mild',
-    'rash',
-    'quiet', // +SpA
-    'calm',
-    'gentle',
-    'careful',
-    'sassy', // +SpD
-    'timid',
-    'hasty',
-    'jolly',
-    'naive', // +Spe
+    'Serious',
+    'Lonely',
+    'Adamant',
+    'Naughty',
+    'Brave', // +Atk
+    'Bold',
+    'Impish',
+    'Lax',
+    'Relaxed', // +Def
+    'Modest',
+    'Mild',
+    'Rash',
+    'Quiet', // +SpA
+    'Calm',
+    'Gentle',
+    'Careful',
+    'Sassy', // +SpD
+    'Timid',
+    'Hasty',
+    'Jolly',
+    'Naive', // +Spe
   ])
-  .default('serious')
+  .default('Serious')
 
 export {
-  statAlignmentSchema,
-  statBoostsSchema,
+  boostsSchema,
+  natureSchema,
   statKeySchema,
+  statKeyWithoutHpSchema,
   statPointsSchema,
 }

@@ -20,9 +20,10 @@ export {
   teraTypeSchema,
 } from './pokemon'
 export {
-  statAlignmentSchema,
-  statBoostsSchema,
+  boostsSchema,
+  natureSchema,
   statKeySchema,
+  statKeyWithoutHpSchema,
   statPointsSchema,
 } from './stats'
 export { uniqueArraySchema } from './utils'

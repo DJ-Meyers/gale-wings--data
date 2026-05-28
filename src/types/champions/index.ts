@@ -7,13 +7,13 @@ import type {
   championsSpeciesNameSchema,
 } from '~/schemas/champions'
 import type { statusSchema, teraTypeSchema } from '~/schemas/pokemon'
-import type { statAlignmentSchema } from '~/schemas/stats'
+import type { natureSchema } from '~/schemas/stats'
 
 export type ChampionsAbility = z.infer<typeof championsAbilitiesSchema>
 export type ChampionsItem = z.infer<typeof championsItemsSchema>
 export type ChampionsMove = z.infer<typeof championsMovesSchema>
 export type ChampionsSpecies = z.infer<typeof championsSpeciesNameSchema>
-export type StatAlignment = z.infer<typeof statAlignmentSchema>
+export type Nature = z.infer<typeof natureSchema>
 export type Status = z.infer<typeof statusSchema>
 export type TeraType = z.infer<typeof teraTypeSchema>
 
