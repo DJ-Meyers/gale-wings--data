@@ -30,7 +30,6 @@ const weatherSchema = z.literal([
 const terrainSchema = z.literal(['Electric', 'Grassy', 'Psychic', 'Misty'])
 
 const fieldConditionsSchema = z.object({
-  gameType: z.literal(['Singles', 'Doubles']).default('Doubles'),
   weather: weatherSchema.optional(),
   terrain: terrainSchema.optional(),
   isGravity: z.boolean().optional(),
