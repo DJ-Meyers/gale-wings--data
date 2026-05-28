@@ -1,10 +1,10 @@
 // Bootstrap a manual regulation file from the current @pkmn/mods/champions dex.
 // Usage: pnpm tsx packages/shared-types/scripts/snapshot-regulation.ts
 //
-// Prints a TS module body to stdout — paste into a new
-// `constants/regulation/<id>.ts` when the next regulation drops (or to
-// regenerate the current one). Cosmetic formes are filtered out at snapshot
-// time so consumers never have to re-filter.
+// Prints the species and item literal arrays to stdout — paste into a new
+// `constants/champions/regulation/<id>.ts` when the next regulation drops (or
+// to regenerate the current one). Cosmetic formes are filtered out at
+// snapshot time so consumers never have to re-filter.
 
 import { Dex, type ID, type ModData } from '@pkmn/dex'
 import * as champions from '@pkmn/mods/champions'

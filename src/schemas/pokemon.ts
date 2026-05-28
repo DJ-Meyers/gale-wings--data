@@ -2,11 +2,12 @@ import { z } from 'zod'
 
 import { getSpecies } from '../dex'
 import { statAlignmentSchema, statBoostsSchema, statPointsSchema } from './stats'
-import { championsAbilitiesSchema, championsItemsSchema, championsMovesSchema, championsSpeciesAbilitiesSchema, championsSpeciesMovesSchema, championsSpeciesNameSchema, type ChampionsSpeciesName, } from './champions';
+import { championsAbilitiesSchema, championsItemsSchema, championsMovesSchema, championsSpeciesAbilitiesSchema, championsSpeciesMovesSchema, championsSpeciesNameSchema, } from './champions';
+import type { ChampionsSpecies } from '../types/champions';
 import { uniqueArraySchema } from './utils';
 
 
-const championsPokemonSchema = (speciesName: ChampionsSpeciesName) => {
+const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
   const species = getSpecies(speciesName);
   return z.object({
     species: z.literal(speciesName),
@@ -55,7 +56,7 @@ const pokemonModifiersSchema = z.object({
   abilityOverride: championsAbilitiesSchema
 })
 
-const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpeciesName) => z.object({
+const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) => z.object({
   ...championsPokemonSchema(speciesName).shape,
   ...pokemonModifiersSchema.shape
 })

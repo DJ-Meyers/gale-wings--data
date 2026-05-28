@@ -1,14 +1,15 @@
-// Manually curated snapshot of Vgc2026M_A. To regenerate from the current
-// @pkmn/mods/champions dex:
+// Manually curated snapshot of VGC 2026 Regulation Set M-A. To regenerate
+// from the current @pkmn/mods/champions dex:
 //   pnpm tsx packages/shared-types/scripts/snapshot-regulation.ts
 // When the next regulation drops and the mod is slow to update, hand-edit
-// this file (or copy it to a sibling — e.g. vgc2026M_B.ts — and re-point
+// this file (or copy it to a sibling — e.g. vgc-2026-m-b.ts — and re-point
 // currentRegulation in ./index.ts).
 
-import type { Regulation } from '../../types/regulation'
+import type { Regulation } from '../../../types/champions/regulation'
 
-export const vgc2026M_A = {
-  id: 'Vgc2026M_A',
+export const vgc2026_MA = {
+  id: 'vgc2026_MA',
+  name: 'VGC 2026 Regulation Set M-A',
   legalSpecies: [
     "Abomasnow",
     "Abomasnow-Mega",
@@ -424,5 +425,5 @@ export const vgc2026M_A = {
   legalMechanics: ['mega-evolution'] as const,
 } as const satisfies Regulation
 
-export type Vgc2026M_ASpecies = (typeof vgc2026M_A.legalSpecies)[number]
-export type Vgc2026M_AItem = (typeof vgc2026M_A.legalItems)[number]
+export type Vgc2026_MASpecies = (typeof vgc2026_MA.legalSpecies)[number]
+export type Vgc2026_MAItem = (typeof vgc2026_MA.legalItems)[number]

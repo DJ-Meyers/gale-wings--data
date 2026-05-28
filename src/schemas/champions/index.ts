@@ -1,16 +1,15 @@
 import { Species } from '@pkmn/dex'
 import z from 'zod'
 
-import { currentRegulation } from '../constants/regulation'
+import { currentRegulation } from '../../constants/champions/regulation'
 import {
   effectiveLearnset,
   getAbilitiesOf,
   getMoveName,
   getOwnMoveNamesOf,
-} from '../dex'
+} from '../../dex'
 
-const legalSpecies = currentRegulation.legalSpecies
-const legalItems = currentRegulation.legalItems
+const { legalSpecies, legalItems } = currentRegulation
 
 // Derived from legal species' abilities, NOT from a global abilities table:
 // abilities like Protosynthesis/Beads of Ruin aren't flagged isNonstandard
@@ -28,9 +27,6 @@ const legalMoves = Array.from(
 )
 
 const championsSpeciesNameSchema = z.literal([...legalSpecies])
-
-type ChampionsSpeciesName = z.infer<typeof championsSpeciesNameSchema>
-
 const championsItemsSchema = z.literal([...legalItems])
 
 const championsSpeciesAbilitiesSchema = (species: Species) =>
@@ -52,7 +48,6 @@ const championsSpeciesMovesSchema = (species: Species) => {
 const championsMovesSchema = z.literal(legalMoves)
 
 export {
-  type ChampionsSpeciesName,
   championsAbilitiesSchema,
   championsItemsSchema,
   championsMovesSchema,

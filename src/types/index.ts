@@ -1,6 +1,6 @@
 export * from './champions'
+export * from './champions/regulation'
 export * from './field-conditions'
 export * from './parser'
 export * from './pokemon'
-export * from './regulation'
 export * from './stats'

@@ -5,7 +5,7 @@ import {
   championsItemsSchema,
   championsMovesSchema,
   championsSpeciesNameSchema,
-} from './champions'
+} from './index'
 
 describe('championsItemsSchema', () => {
   it.each(['Sitrus Berry', 'Choice Scarf', 'Leftovers', 'Charizardite Y'])(
