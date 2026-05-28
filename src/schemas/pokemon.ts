@@ -10,7 +10,12 @@ import {
   championsSpeciesMovesSchema,
   championsSpeciesNameSchema,
 } from './champions'
-import { boostsSchema, natureSchema, statPointsSchema } from './stats'
+import {
+  boostsSchema,
+  ivsSchema,
+  natureSchema,
+  statPointsSchema,
+} from './stats'
 import { uniqueArraySchema } from './utils'
 
 const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
@@ -21,6 +26,7 @@ const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
     ability: championsSpeciesAbilitiesSchema(species),
     item: championsItemsSchema.optional(),
     statPoints: statPointsSchema,
+    ivs: ivsSchema,
     moves: uniqueArraySchema(championsSpeciesMovesSchema(species)).max(4),
   })
 }
@@ -85,6 +91,7 @@ const looseChampionsPokemonSchema = z.object({
   ability: championsAbilitiesSchema,
   item: championsItemsSchema.optional(),
   statPoints: statPointsSchema,
+  ivs: ivsSchema,
   moves: uniqueArraySchema(championsMovesSchema).max(4),
 })
 

@@ -21,6 +21,7 @@ export {
 } from './pokemon'
 export {
   boostsSchema,
+  ivsSchema,
   natureSchema,
   statKeySchema,
   statKeyWithoutHpSchema,

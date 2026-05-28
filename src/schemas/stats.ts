@@ -16,6 +16,10 @@ const statBoostValueSchema = z.number().int().min(-6).max(6).default(0)
 
 const boostsSchema = z.record(statKeyWithoutHpSchema, statBoostValueSchema)
 
+const ivsSchema = z
+  .record(statKeySchema, z.number().int().min(0).max(31).default(31))
+  .optional()
+
 const natureSchema = z
   .literal([
     'Serious',
@@ -44,6 +48,7 @@ const natureSchema = z
 
 export {
   boostsSchema,
+  ivsSchema,
   natureSchema,
   statKeySchema,
   statKeyWithoutHpSchema,
