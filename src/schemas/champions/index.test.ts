@@ -31,12 +31,15 @@ describe('championsMovesSchema', () => {
     },
   )
 
-  it.each(['Happy Hour', 'Hidden Power', 'Splash', 'Tera Blast', 'Not A Real Move'])(
-    'should reject non-Champions move %s',
-    (name) => {
-      expect(championsMovesSchema.safeParse(name).success).toBe(false)
-    },
-  )
+  it.each([
+    'Happy Hour',
+    'Hidden Power',
+    'Splash',
+    'Tera Blast',
+    'Not A Real Move',
+  ])('should reject non-Champions move %s', (name) => {
+    expect(championsMovesSchema.safeParse(name).success).toBe(false)
+  })
 
   it.each(['Spore', 'Milk Drink', 'Soft-Boiled', 'Power Shift'])(
     'should reject move %s (no Champions-legal species learns it)',
@@ -62,7 +65,9 @@ describe('championsAbilitiesSchema', () => {
   )
 
   it('should reject a made-up ability', () => {
-    expect(championsAbilitiesSchema.safeParse('Not A Real Ability').success).toBe(false)
+    expect(
+      championsAbilitiesSchema.safeParse('Not A Real Ability').success,
+    ).toBe(false)
   })
 })
 

@@ -4,7 +4,7 @@ import type {
   itemNameSchema,
   mechanicSchema,
   speciesNameSchema,
-} from '../../schemas/champions/regulation'
+} from '~/schemas/champions/regulation'
 
 export type Mechanic = z.infer<typeof mechanicSchema>
 export type AllSpeciesName = z.infer<typeof speciesNameSchema>

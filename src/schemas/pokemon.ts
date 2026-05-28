@@ -1,24 +1,33 @@
 import { z } from 'zod'
 
-import { getSpecies } from '../dex'
-import { statAlignmentSchema, statBoostsSchema, statPointsSchema } from './stats'
-import { championsAbilitiesSchema, championsItemsSchema, championsMovesSchema, championsSpeciesAbilitiesSchema, championsSpeciesMovesSchema, championsSpeciesNameSchema, } from './champions';
-import type { ChampionsSpecies } from '../types/champions';
-import { uniqueArraySchema } from './utils';
-
+import { getSpecies } from '~/dex'
+import type { ChampionsSpecies } from '~/types/champions'
+import {
+  championsAbilitiesSchema,
+  championsItemsSchema,
+  championsMovesSchema,
+  championsSpeciesAbilitiesSchema,
+  championsSpeciesMovesSchema,
+  championsSpeciesNameSchema,
+} from './champions'
+import {
+  statAlignmentSchema,
+  statBoostsSchema,
+  statPointsSchema,
+} from './stats'
+import { uniqueArraySchema } from './utils'
 
 const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
-  const species = getSpecies(speciesName);
+  const species = getSpecies(speciesName)
   return z.object({
     species: z.literal(speciesName),
     statAlignment: statAlignmentSchema,
     ability: championsSpeciesAbilitiesSchema(species),
     item: championsItemsSchema.optional(),
     statPoints: statPointsSchema,
-    moves: uniqueArraySchema(championsSpeciesMovesSchema(species)).max(4)
+    moves: uniqueArraySchema(championsSpeciesMovesSchema(species)).max(4),
   })
 }
-
 
 const teraTypeSchema = z.literal([
   '',
@@ -43,9 +52,7 @@ const teraTypeSchema = z.literal([
   'stellar',
 ])
 
-const statusSchema = z.literal([
-  '', 'slp', 'psn', 'brn', 'frz', 'par', 'tox',
-])
+const statusSchema = z.literal(['', 'slp', 'psn', 'brn', 'frz', 'par', 'tox'])
 
 const pokemonModifiersSchema = z.object({
   teraType: teraTypeSchema,
@@ -53,13 +60,14 @@ const pokemonModifiersSchema = z.object({
   status: statusSchema,
   isCrit: z.boolean(),
   abilityOn: z.boolean(),
-  abilityOverride: championsAbilitiesSchema
+  abilityOverride: championsAbilitiesSchema,
 })
 
-const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) => z.object({
-  ...championsPokemonSchema(speciesName).shape,
-  ...pokemonModifiersSchema.shape
-})
+const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) =>
+  z.object({
+    ...championsPokemonSchema(speciesName).shape,
+    ...pokemonModifiersSchema.shape,
+  })
 
 // Boundary schema: validates each field against the global Champions-legal pool
 // but does NOT enforce per-species relationships (e.g. ability must be in THIS species's ability list).

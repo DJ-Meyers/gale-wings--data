@@ -16,13 +16,13 @@ const species = dex.species
   .all()
   .filter((s) => s.isNonstandard == null && !s.isCosmeticForme)
   .map((s) => s.name)
-  .sort()
+  .toSorted()
 
 const items = dex.items
   .all()
   .filter((i) => i.isNonstandard == null)
   .map((i) => i.name)
-  .sort()
+  .toSorted()
 
 const printArray = (label: string, values: readonly string[]): string => {
   const lines = values.map((v) => `    ${JSON.stringify(v)},`).join('\n')

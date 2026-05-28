@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
-import { allItemNames } from '../../constants/all-items'
-import { allSpeciesNames } from '../../constants/all-species'
-import { uniqueArraySchema } from '../utils'
+import { allItemNames } from '~/constants/all-items'
+import { allSpeciesNames } from '~/constants/all-species'
+import { uniqueArraySchema } from '~/schemas/utils'
 
 // Generational gimmick mechanics. A regulation declares which (if any) are
 // legal — the parser/calc consult this rather than per-mechanic feature flags.

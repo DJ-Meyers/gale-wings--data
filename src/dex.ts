@@ -48,9 +48,9 @@ export const effectiveLearnset = (
   const own = dex.data.Learnsets?.[species.id]?.learnset ?? {}
   const isAdditiveForme = Object.keys(own).length < ADDITIVE_FORME_LEARNSET_MAX
   if (
-    isAdditiveForme
-    && species.baseSpecies
-    && species.baseSpecies !== species.name
+    isAdditiveForme &&
+    species.baseSpecies &&
+    species.baseSpecies !== species.name
   ) {
     const baseId = dex.species.get(species.baseSpecies)?.id
     if (baseId) {

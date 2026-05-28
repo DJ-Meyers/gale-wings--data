@@ -13,7 +13,8 @@ const baseIncineroar = {
 
 describe('championsPokemonSchema(Incineroar)', () => {
   it('should accept a fully valid Incineroar', () => {
-    const result = championsPokemonSchema('Incineroar').safeParse(baseIncineroar)
+    const result =
+      championsPokemonSchema('Incineroar').safeParse(baseIncineroar)
     expect(result.success).toBe(true)
   })
 

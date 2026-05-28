@@ -31,13 +31,13 @@ if (which === 'species') {
   const names = Dex.species
     .all()
     .map((s) => s.name)
-    .sort()
+    .toSorted()
   print('allSpeciesNames', names)
 } else if (which === 'items') {
   const names = Dex.items
     .all()
     .map((i) => i.name)
-    .sort()
+    .toSorted()
   print('allItemNames', names)
 } else {
   process.stderr.write(`usage: snapshot-all-names.ts species|items\n`)

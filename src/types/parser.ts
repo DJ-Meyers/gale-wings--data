@@ -42,4 +42,3 @@ export interface ParseInputResult {
   pokemon: ParsedPokemon
   errors: ParseError[]
 }
-

@@ -1,16 +1,16 @@
-export { fieldConditionsSchema } from './field-conditions'
-export {
-  itemNameSchema,
-  mechanicSchema,
-  regulationSchema,
-  speciesNameSchema,
-} from './champions/regulation'
 export {
   championsAbilitiesSchema,
   championsItemsSchema,
   championsMovesSchema,
   championsSpeciesNameSchema,
 } from './champions'
+export {
+  itemNameSchema,
+  mechanicSchema,
+  regulationSchema,
+  speciesNameSchema,
+} from './champions/regulation'
+export { fieldConditionsSchema } from './field-conditions'
 export {
   championsPokemonSchema,
   championsPokemonWithModifiersSchema,

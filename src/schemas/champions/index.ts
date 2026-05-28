@@ -1,13 +1,13 @@
 import { Species } from '@pkmn/dex'
 import z from 'zod'
 
-import { currentRegulation } from '../../constants/champions/regulation'
+import { currentRegulation } from '~/constants/champions/regulation'
 import {
   effectiveLearnset,
   getAbilitiesOf,
   getMoveName,
   getOwnMoveNamesOf,
-} from '../../dex'
+} from '~/dex'
 
 const { legalSpecies, legalItems } = currentRegulation
 
@@ -15,16 +15,12 @@ const { legalSpecies, legalItems } = currentRegulation
 // abilities like Protosynthesis/Beads of Ruin aren't flagged isNonstandard
 // themselves, but every Pokémon that carries them is — so the ability isn't
 // actually legal in the current regulation.
-const legalAbilities = Array.from(
-  new Set(legalSpecies.flatMap((name) => getAbilitiesOf(name))),
-)
+const legalAbilities = [...new Set(legalSpecies.flatMap((name) => getAbilitiesOf(name)))]
 
 // Derived from learnsets of legal species. Some moves (Milk Drink, Soft-Boiled,
 // Spore, Power Shift) aren't flagged isNonstandard but their only learners are
 // out of pool, so they aren't legal in practice.
-const legalMoves = Array.from(
-  new Set(legalSpecies.flatMap((name) => getOwnMoveNamesOf(name))),
-)
+const legalMoves = [...new Set(legalSpecies.flatMap((name) => getOwnMoveNamesOf(name)))]
 
 const championsSpeciesNameSchema = z.literal([...legalSpecies])
 const championsItemsSchema = z.literal([...legalItems])

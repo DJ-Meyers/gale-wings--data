@@ -8,7 +8,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "noEmit": false,
-    "types": []
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": ["src"]
 }
