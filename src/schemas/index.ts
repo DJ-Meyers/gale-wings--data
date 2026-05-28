@@ -25,3 +25,4 @@ export {
   statKeySchema,
   statPointsSchema,
 } from './stats'
+export { uniqueArraySchema } from './utils'

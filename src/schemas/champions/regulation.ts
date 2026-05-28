@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { allItemNames } from '../../constants/all-items'
 import { allSpeciesNames } from '../../constants/all-species'
+import { uniqueArraySchema } from '../utils'
 
 // Generational gimmick mechanics. A regulation declares which (if any) are
 // legal — the parser/calc consult this rather than per-mechanic feature flags.
@@ -21,7 +22,7 @@ export const itemNameSchema = z.literal([...allItemNames])
 export const regulationSchema = z.object({
   id: z.string(),
   name: z.string(),
-  legalSpecies: z.array(speciesNameSchema).readonly(),
-  legalItems: z.array(itemNameSchema).readonly(),
-  legalMechanics: z.array(mechanicSchema).readonly(),
+  legalSpecies: uniqueArraySchema(speciesNameSchema).readonly(),
+  legalItems: uniqueArraySchema(itemNameSchema).readonly(),
+  legalMechanics: uniqueArraySchema(mechanicSchema).readonly(),
 })
