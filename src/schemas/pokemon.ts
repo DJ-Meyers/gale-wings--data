@@ -51,19 +51,28 @@ const teraTypeSchema = z.literal([
 
 const statusSchema = z.literal(['', 'slp', 'psn', 'brn', 'frz', 'par', 'tox'])
 
-const pokemonModifiersSchema = z.object({
-  teraType: teraTypeSchema,
+const calcModifiersSchema = z.object({
+  // Intentionally NOT narrowed to species learnset — Copycat / Mirror Move /
+  // Sleep Talk / Me First all let a Pokemon execute off-pool moves in real
+  // battles. The calc still wants to model these scenarios.
+  move: z.union([championsMovesSchema, z.literal('')]).default(''),
+  teraType: teraTypeSchema, // '' = not terastallized in this calc
   boosts: boostsSchema,
   status: statusSchema,
-  isCrit: z.boolean(),
-  abilityOn: z.boolean(),
-  abilityOverride: championsAbilitiesSchema,
+  isCrit: z.boolean().default(false),
+  abilityOn: z.boolean().default(false),
+  // Intentionally NOT narrowed to species abilities — Skill Swap / Trace /
+  // Role Play / Receiver can grant any ability from another Pokemon.
+  abilityOverride: championsAbilitiesSchema.optional(),
+  boostedStat: z
+    .enum(['', 'atk', 'def', 'spa', 'spd', 'spe', 'auto'])
+    .default(''),
 })
 
 const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) =>
   z.object({
     ...championsPokemonSchema(speciesName).shape,
-    ...pokemonModifiersSchema.shape,
+    ...calcModifiersSchema.shape,
   })
 
 // Boundary schema: validates each field against the global Champions-legal pool
@@ -80,10 +89,10 @@ const looseChampionsPokemonSchema = z.object({
 })
 
 export {
+  calcModifiersSchema,
   championsPokemonSchema,
   championsPokemonWithModifiersSchema,
   looseChampionsPokemonSchema,
-  pokemonModifiersSchema,
   statusSchema,
   teraTypeSchema,
 }

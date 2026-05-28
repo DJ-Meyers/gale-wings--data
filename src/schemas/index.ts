@@ -12,10 +12,10 @@ export {
 } from './champions/regulation'
 export { fieldConditionsSchema } from './field-conditions'
 export {
+  calcModifiersSchema,
   championsPokemonSchema,
   championsPokemonWithModifiersSchema,
   looseChampionsPokemonSchema,
-  pokemonModifiersSchema,
   statusSchema,
   teraTypeSchema,
 } from './pokemon'
