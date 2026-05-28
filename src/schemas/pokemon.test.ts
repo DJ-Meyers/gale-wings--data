@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 
-import type { ChampionsSpecies } from '../types/champions'
 import { championsPokemonSchema, looseChampionsPokemonSchema } from './pokemon'
 
 const baseIncineroar = {
@@ -14,14 +13,14 @@ const baseIncineroar = {
 
 describe('championsPokemonSchema(Incineroar)', () => {
   it('should accept a fully valid Incineroar', () => {
-    const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse(baseIncineroar)
+    const result = championsPokemonSchema('Incineroar').safeParse(baseIncineroar)
     expect(result.success).toBe(true)
   })
 
   it.each(['Flare Blitz', 'Fake Out', 'Hyper Beam'])(
     'should accept %s in moves (Incineroar can learn it)',
     (move) => {
-      const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+      const result = championsPokemonSchema('Incineroar').safeParse({
         ...baseIncineroar,
         moves: [move],
       })
@@ -32,7 +31,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   it.each(['U-turn', 'Knock Off'])(
     'should reject %s in moves (removed from Incineroar in Champions)',
     (move) => {
-      const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+      const result = championsPokemonSchema('Incineroar').safeParse({
         ...baseIncineroar,
         moves: [move],
       })
@@ -43,7 +42,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   it('should reject an ability that exists in Champions but not on Incineroar', () => {
     // Swift Swim is a real Champions ability (Basculegion has it),
     // but Incineroar gets Blaze/Intimidate only.
-    const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+    const result = championsPokemonSchema('Incineroar').safeParse({
       ...baseIncineroar,
       ability: 'Swift Swim',
     })
@@ -51,7 +50,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   })
 
   it('should reject a species mismatch in the parsed object', () => {
-    const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+    const result = championsPokemonSchema('Incineroar').safeParse({
       ...baseIncineroar,
       species: 'Basculegion',
     })
@@ -59,7 +58,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   })
 
   it('should reject duplicate moves', () => {
-    const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+    const result = championsPokemonSchema('Incineroar').safeParse({
       ...baseIncineroar,
       moves: ['Flare Blitz', 'Flare Blitz'],
     })
@@ -67,7 +66,7 @@ describe('championsPokemonSchema(Incineroar)', () => {
   })
 
   it('should accept an empty moves array', () => {
-    const result = championsPokemonSchema('Incineroar' as ChampionsSpecies).safeParse({
+    const result = championsPokemonSchema('Incineroar').safeParse({
       ...baseIncineroar,
       moves: [],
     })
