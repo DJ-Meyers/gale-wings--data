@@ -57,7 +57,7 @@ const teraTypeSchema = z.literal([
 
 const statusSchema = z.literal(['', 'slp', 'psn', 'brn', 'frz', 'par', 'tox'])
 
-const calcModifiersSchema = z.object({
+const calcParametersSchema = z.object({
   // Intentionally NOT narrowed to species learnset — Copycat / Mirror Move /
   // Sleep Talk / Me First all let a Pokemon execute off-pool moves in real
   // battles. The calc still wants to model these scenarios.
@@ -75,10 +75,10 @@ const calcModifiersSchema = z.object({
     .default(''),
 })
 
-const championsPokemonWithModifiersSchema = (speciesName: ChampionsSpecies) =>
+const championsPokemonWithCalcParametersSchema = (speciesName: ChampionsSpecies) =>
   z.object({
     ...championsPokemonSchema(speciesName).shape,
-    ...calcModifiersSchema.shape,
+    ...calcParametersSchema.shape,
   })
 
 // Boundary schema: validates each field against the global Champions-legal pool
@@ -96,9 +96,9 @@ const looseChampionsPokemonSchema = z.object({
 })
 
 export {
-  calcModifiersSchema,
+  calcParametersSchema,
   championsPokemonSchema,
-  championsPokemonWithModifiersSchema,
+  championsPokemonWithCalcParametersSchema,
   looseChampionsPokemonSchema,
   statusSchema,
   teraTypeSchema,
