@@ -1,6 +1,6 @@
 {
   "name": "@dj-meyers/galewings",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared schemas and types for the Galewings API (zod schemas, derived domain types, and tRPC AppRouter type).",
   "private": false,
   "type": "module",
