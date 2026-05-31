@@ -143,15 +143,3 @@ export type SpeciesAliasTarget =
   | 'Zoroark'
   | 'Zoroark-Hisui'
 
-export type ItemAliasTarget =
-  | 'Assault Vest'
-  | 'Choice Band'
-  | 'Choice Scarf'
-  | 'Choice Specs'
-  | 'Eviolite'
-  | 'Focus Sash'
-  | 'Heavy-Duty Boots'
-  | 'Leftovers'
-  | 'Life Orb'
-  | 'Lum Berry'
-  | 'Sitrus Berry'
