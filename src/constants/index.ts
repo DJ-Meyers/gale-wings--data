@@ -1,4 +1,5 @@
 export { allItemNames } from './all-items'
+export { allMoveNames } from './all-moves'
 export { allSpeciesNames } from './all-species'
 export {
   currentRegulation,

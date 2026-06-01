@@ -1,12 +1,14 @@
-// Snapshot the full @pkmn/dex (gen 9) species and item names. Powers the
-// AllSpeciesName / AllItemName literal-union constraints on Regulation<S, I>.
-// Re-run when @pkmn/dex bumps to pick up new species or items.
+// Snapshot the full @pkmn/dex (gen 9) species, item, and move names. Powers
+// the AllSpeciesName / AllItemName / AllMoveName literal-union constraints.
+// Re-run when @pkmn/dex bumps to pick up new entries.
 //
 // Usage:
 //   pnpm tsx packages/shared-types/scripts/snapshot-all-names.ts species \
 //     > packages/shared-types/src/constants/all-species.ts
 //   pnpm tsx packages/shared-types/scripts/snapshot-all-names.ts items \
 //     > packages/shared-types/src/constants/all-items.ts
+//   pnpm tsx packages/shared-types/scripts/snapshot-all-names.ts moves \
+//     > packages/shared-types/src/constants/all-moves.ts
 
 import { Dex } from '@pkmn/dex'
 
@@ -39,7 +41,13 @@ if (which === 'species') {
     .map((i) => i.name)
     .toSorted()
   print('allItemNames', names)
+} else if (which === 'moves') {
+  const names = Dex.moves
+    .all()
+    .map((m) => m.name)
+    .toSorted()
+  print('allMoveNames', names)
 } else {
-  process.stderr.write(`usage: snapshot-all-names.ts species|items\n`)
+  process.stderr.write(`usage: snapshot-all-names.ts species|items|moves\n`)
   process.exit(1)
 }
