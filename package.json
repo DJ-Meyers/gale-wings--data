@@ -27,6 +27,10 @@
     "./router": {
       "types": "./dist/router.d.ts",
       "import": "./dist/router.js"
+    },
+    "./aliases": {
+      "types": "./dist/aliases/index.d.ts",
+      "import": "./dist/aliases/index.js"
     }
   },
   "scripts": {
@@ -48,6 +52,7 @@
     "@pkmn/data": "^0.10.9",
     "@pkmn/dex": "^0.10.9",
     "@pkmn/mods": "^0.10.9",
+    "@smogon/calc": "^0.10.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
