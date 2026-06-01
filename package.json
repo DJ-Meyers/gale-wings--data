@@ -1,7 +1,7 @@
 {
-  "name": "@dj-meyers/galewings",
-  "version": "0.2.0",
-  "description": "Shared schemas and types for the Galewings API (zod schemas, derived domain types, and tRPC AppRouter type).",
+  "name": "@dj-meyers/gale-wings",
+  "version": "1.0.0",
+  "description": "Shared schemas, types, constants, and aliases for Gale Wings (zod schemas, derived domain types, regulation data, and alias maps).",
   "private": false,
   "type": "module",
   "files": [
@@ -24,10 +24,6 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types/index.js"
     },
-    "./router": {
-      "types": "./dist/router.d.ts",
-      "import": "./dist/router.js"
-    },
     "./aliases": {
       "types": "./dist/aliases/index.d.ts",
       "import": "./dist/aliases/index.js"
@@ -41,12 +37,11 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DJ-Meyers/galewings-api.git",
-    "directory": "packages/shared-types"
+    "url": "git+https://github.com/DJ-Meyers/gale-wings--data.git"
   },
   "dependencies": {
     "@pkmn/data": "^0.10.9",
@@ -56,9 +51,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@galewings/server": "workspace:*",
     "tsup": "^8.3.5",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@types/node": "^22.10.0"
   }
 }

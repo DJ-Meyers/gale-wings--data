@@ -1,29 +1,17 @@
-# @dj-meyers/galewings
+# @dj-meyers/gale-wings
 
-Shared schemas and types for the Galewings API. Three entry points:
+Shared schemas, types, constants, and aliases for Gale Wings. Five entry points:
 
-- `@dj-meyers/galewings/schemas` — zod schemas (runtime-validatable; source of truth)
-- `@dj-meyers/galewings/types` — domain types derived from the schemas via `z.infer`
-- `@dj-meyers/galewings/router` — the tRPC `AppRouter` type (for client inference only)
+- `@dj-meyers/gale-wings/schemas` — zod schemas (runtime-validatable; source of truth)
+- `@dj-meyers/gale-wings/types` — domain types derived from the schemas via `z.infer`
+- `@dj-meyers/gale-wings/constants` — species, items, moves, and regulation snapshots
+- `@dj-meyers/gale-wings/dex` — regulation-aware `@pkmn/dex` accessors
+- `@dj-meyers/gale-wings/aliases` — strictly-typed species/move/item alias maps
 
-The subpath split keeps the `AppRouter` type lazy so consumers that only need
-domain types or schemas don't pull in server-internal type machinery.
+Consumed by both `gale-wings--api` (server runtime + tRPC procedure inputs) and
+`gale-wings--client` (form schemas, types, client-side validation).
 
-## Build note: cross-package source include
+## Publishing
 
-`tsconfig.build.json` intentionally `include`s `../server/src/**/*.ts` and
-maps `~/*` to the server's source tree. This is so `src/router.ts` can
-re-export `AppRouter` from `@galewings/server` and have tsc inline the full
-type into `dist/router.d.ts` (downstream consumers of `@dj-meyers/galewings`
-never resolve `~/*` at type-check time — they only see the bundled `.d.ts`).
-
-Consequences to keep in mind, not to "fix":
-
-- This bypasses the project-references graph and introduces a soft
-  workspace cycle (`shared-types` devDeps `@galewings/server`, which
-  depends on `@dj-meyers/galewings`). pnpm tolerates it; pre-existing cycle
-  warnings will mask any real cycle added later — investigate before
-  dismissing.
-- Running `pnpm --filter @dj-meyers/galewings build` before the server source
-  typechecks will fail in a confusing way. Build the server first or run
-  `pnpm -r build` from the root.
+Published to GitHub Packages on push to `main` when `package.json` is bumped.
+See `.github/workflows/publish.yml`.

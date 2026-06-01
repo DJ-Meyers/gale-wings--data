@@ -6,7 +6,6 @@ export default defineConfig({
     dex: 'src/dex.ts',
     schemas: 'src/schemas/index.ts',
     'types/index': 'src/types/index.ts',
-    router: 'src/router.ts',
     'aliases/index': 'src/aliases/index.ts',
   },
   format: ['esm'],
