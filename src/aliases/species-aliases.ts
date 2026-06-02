@@ -69,6 +69,9 @@ export const speciesAliases = {
   Machamp: ['Champ'],
   Mamoswine: ['Mamo'],
   Maushold: ['Maus', 'Mouse'],
+  // Mega Meowstic is identical across genders; default the bare
+  // 'Meowstic-Mega' to the female form.
+  'Meowstic-F-Mega': ['Meowstic-Mega'],
   Ninetales: ['Ninetails'],
   'Ninetales-Alola': [
     'Ninetails-Alola',
