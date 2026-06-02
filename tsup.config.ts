@@ -7,6 +7,7 @@ export default defineConfig({
     schemas: 'src/schemas/index.ts',
     'types/index': 'src/types/index.ts',
     'aliases/index': 'src/aliases/index.ts',
+    'sprites/index': 'src/sprites/index.ts',
   },
   format: ['esm'],
   dts: { tsconfig: 'tsconfig.build.json' },

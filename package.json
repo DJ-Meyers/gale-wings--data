@@ -20,6 +20,10 @@
       "types": "./dist/schemas.d.ts",
       "import": "./dist/schemas.js"
     },
+    "./sprites": {
+      "types": "./dist/sprites/index.d.ts",
+      "import": "./dist/sprites/index.js"
+    },
     "./types": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types/index.js"
@@ -31,6 +35,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "build:sprites": "tsx scripts/build-sprite-manifest.ts",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "test": "vitest run"
@@ -52,6 +57,7 @@
   },
   "devDependencies": {
     "tsup": "^8.3.5",
+    "tsx": "^4.20.3",
     "typescript": "~5.9.3",
     "vitest": "^4.0.18",
     "@types/node": "^22.10.0"
