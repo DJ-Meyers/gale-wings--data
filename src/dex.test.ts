@@ -90,6 +90,30 @@ describe('Meowstic-Mega gender fallback', () => {
   })
 })
 
+describe('getSpecies defaults', () => {
+  it('should attach defaultNature/defaultMove/defaultAbility from the regulation', () => {
+    const tflame = getSpecies('Talonflame')
+    expect(tflame.defaultNature).toBe('Jolly')
+    expect(tflame.defaultMove).toBe('Brave Bird')
+    expect(tflame.defaultAbility).toBe('Gale Wings')
+  })
+
+  it('should fall back to the only ability when the forme has one (Megas)', () => {
+    // CSV leaves ability blank for Megas — the forme has a single forced
+    // ability via species.abilities, which the dex layer surfaces.
+    const aero = getSpecies('Aerodactyl-Mega')
+    expect(aero.defaultAbility).toBe('Tough Claws')
+  })
+
+  it('should leave defaults undefined for species without a curated entry', () => {
+    const abomasnow = getSpecies('Abomasnow')
+    expect(abomasnow.defaultNature).toBeUndefined()
+    expect(abomasnow.defaultMove).toBeUndefined()
+    // Multi-ability species with no CSV entry → no fallback.
+    expect(abomasnow.defaultAbility).toBeUndefined()
+  })
+})
+
 describe('patched megas legality', () => {
   // These megas only exist as legality entries in @pkmn/mods/champions's
   // FormatsData; the regulation snapshot must list them for the patch to be

@@ -10,6 +10,11 @@ import * as champions from '@pkmn/mods/champions'
 
 import { SPECIES_ALIASES } from './aliases'
 import { championsMegaSpeciesPatch } from './constants/champions/mega-species-patch'
+import { currentRegulation } from './constants/champions/regulation'
+import type {
+  AllSpeciesName,
+  SpeciesDefault,
+} from './types/champions/regulation'
 
 // @pkmn/mods/champions ships Champions-only megas (Clefable-Mega, Greninja-Mega,
 // etc.) as legality entries only — no Pokedex/Species data. Without the patch,
@@ -44,7 +49,39 @@ dex.data.Aliases = {
 // Makes this module async — consumers must await imports transitively.
 await dex.learnsets.get('venusaur')
 
-export const getSpecies = (name: string): Species => dex.species.get(name)
+// Species returned by getSpecies, augmented with form-prefill defaults sourced
+// from `currentRegulation.speciesDefaults`. Fields are undefined when the
+// species has no curated default in the current regulation. `defaultAbility`
+// additionally falls back to the species's only ability when the forme is
+// single-ability (most Megas) — matching the CSV convention of leaving the
+// ability cell blank for forced-ability formes.
+export type SpeciesWithDefaults = Species & {
+  defaultNature?: SpeciesDefault['nature']
+  defaultMove?: SpeciesDefault['move']
+  defaultAbility?: string
+}
+
+const attachDefaults = (species: Species): SpeciesWithDefaults => {
+  const augmented = species as SpeciesWithDefaults
+  // Idempotent: @pkmn/dex caches Species instances, so subsequent calls hit
+  // the same object. Re-assigning the same values is cheap and avoids a
+  // sentinel flag.
+  // Widen to the regulation's full key space — the literal type of
+  // `speciesDefaults` only includes keys we've actually populated, so indexing
+  // by an arbitrary species name needs the Partial<Record<…>> view.
+  const defaults: Partial<Record<AllSpeciesName, SpeciesDefault>> =
+    currentRegulation.speciesDefaults
+  const seed = defaults[species.name as AllSpeciesName]
+  augmented.defaultNature = seed?.nature
+  augmented.defaultMove = seed?.move
+  const abilities = Object.values(species.abilities)
+  augmented.defaultAbility =
+    seed?.ability ?? (abilities.length === 1 ? abilities[0] : undefined)
+  return augmented
+}
+
+export const getSpecies = (name: string): SpeciesWithDefaults =>
+  attachDefaults(dex.species.get(name))
 export const getItem = (name: string): Item => dex.items.get(name)
 export const getMoveName = (id: string): string | undefined =>
   dex.moves.get(id)?.name
