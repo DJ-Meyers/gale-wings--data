@@ -1,12 +1,13 @@
 # @dj-meyers/gale-wings
 
-Shared schemas, types, constants, and aliases for Gale Wings. Five entry points:
+Shared schemas, types, constants, and aliases for Gale Wings. Six entry points:
 
 - `@dj-meyers/gale-wings/schemas` — zod schemas (runtime-validatable; source of truth)
 - `@dj-meyers/gale-wings/types` — domain types derived from the schemas via `z.infer`
 - `@dj-meyers/gale-wings/constants` — species, items, moves, and regulation snapshots
 - `@dj-meyers/gale-wings/dex` — regulation-aware `@pkmn/dex` accessors
 - `@dj-meyers/gale-wings/aliases` — strictly-typed species/move/item alias maps
+- `@dj-meyers/gale-wings/sprites` — `getSpriteUrl()` over a SHA-pinned `smogon/sprites` manifest
 
 Consumed by both `gale-wings--api` (server runtime + tRPC procedure inputs) and
 `gale-wings--client` (form schemas, types, client-side validation).
@@ -17,6 +18,21 @@ Published to GitHub Packages on push to `main` when `package.json` is bumped.
 See `.github/workflows/publish.yml`.
 
 ## Changelog
+
+### 1.2.0
+
+- **`/sprites` subpath export.** New `getSpriteUrl(name, { shiny? })` returns a
+  jsDelivr URL pointing at `smogon/sprites/src/champions/<sid>.png` for any
+  Champions-legal species, or `undefined` for unknown input. Backed by a
+  generated `manifest.json` (321 entries, covering all 24 Champions-only
+  Megas) whose `baseUrl` is pinned to a 40-char `smogon/sprites` commit SHA
+  so jsDelivr can cache responses indefinitely. String inputs route through
+  `getSpecies()`, so aliases like `KG` and `Meowstic-Mega` resolve to the
+  right URL without a second alias table. The manifest is regenerated
+  manually via `pnpm build:sprites` (with `SMOGON_SPRITES_SHA=<sha>`) — not
+  wired into `pnpm build` or CI, so SHA bumps are intentional. A drift test
+  asserts every species in `championsMegaSpeciesPatch` has a sprite, so
+  future patch additions without a manifest refresh fail CI.
 
 ### 1.1.0
 
