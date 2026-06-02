@@ -61,7 +61,7 @@ export const speciesAliases = {
   Hippowdon: ['Hippo'],
   Incineroar: ['Incin', 'GOAT', 'Wolfe'],
   Kangaskhan: ['Kang', 'Kanga'],
-  Kingambit: ['Gambit', 'Cringegambit'],
+  Kingambit: ['Gambit', 'Cringegambit', 'KG'],
   'Kommo-o': ['Kommo', 'komo', 'komoo', 'komo o', 'komo-o'],
   Krookodile: ['Krook'],
   Lopunny: ['bunny'],
