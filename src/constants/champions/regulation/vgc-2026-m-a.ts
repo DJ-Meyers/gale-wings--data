@@ -6,11 +6,14 @@
 // currentRegulation in ./index.ts).
 
 import type { Regulation } from '~/types/champions/regulation'
+import { vgc2026_MADefaults } from './vgc-2026-m-a-defaults'
 
-export const vgc2026_MA = {
-  id: 'vgc2026_MA',
-  name: 'VGC 2026 Regulation Set M-A',
-  legalSpecies: [
+// `legalSpecies` / `legalItems` are extracted from the regulation object so
+// `Vgc2026_MASpecies` / `Vgc2026_MAItem` can be derived without flowing
+// through `vgc2026_MA`. The sibling defaults table keys off `Vgc2026_MASpecies`
+// for compile-time validation; deriving the type from `vgc2026_MA.legalSpecies`
+// would cycle (vgc2026_MA → vgc2026_MADefaults → Vgc2026_MASpecies → vgc2026_MA).
+const legalSpecies = [
     'Abomasnow',
     'Abomasnow-Mega',
     'Absol',
@@ -302,8 +305,9 @@ export const vgc2026_MA = {
     'Wyrdeer',
     'Zoroark',
     'Zoroark-Hisui',
-  ] as const,
-  legalItems: [
+] as const
+
+const legalItems = [
     'Abomasite',
     'Absolite',
     'Aerodactylite',
@@ -421,9 +425,16 @@ export const vgc2026_MA = {
     'Wacan Berry',
     'White Herb',
     'Yache Berry',
-  ] as const,
-  legalMechanics: ['mega-evolution'] as const,
-} as const satisfies Regulation
+] as const
 
-export type Vgc2026_MASpecies = (typeof vgc2026_MA.legalSpecies)[number]
-export type Vgc2026_MAItem = (typeof vgc2026_MA.legalItems)[number]
+export type Vgc2026_MASpecies = (typeof legalSpecies)[number]
+export type Vgc2026_MAItem = (typeof legalItems)[number]
+
+export const vgc2026_MA = {
+  id: 'vgc2026_MA',
+  name: 'VGC 2026 Regulation Set M-A',
+  legalSpecies,
+  legalItems,
+  legalMechanics: ['mega-evolution'] as const,
+  speciesDefaults: vgc2026_MADefaults,
+} as const satisfies Regulation

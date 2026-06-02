@@ -19,6 +19,25 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 1.3.0
+
+- **Per-regulation species defaults on `getSpecies()`.** The regulation now
+  carries a curated `speciesDefaults` table (nature / signature move /
+  ability per legal species), and `getSpecies(name)` attaches the active
+  regulation's seed values directly to the returned `Species` as
+  `defaultNature`, `defaultMove`, and `defaultAbility` — ready to drop into
+  a form prefill without a second lookup. `defaultAbility` falls back to
+  `species.abilities[0]` when the forme has a single forced ability (most
+  Megas), so the curated table can omit ability for those rows. The
+  defaults table is typed `Partial<Record<Vgc2026_MASpecies,
+  SpeciesDefault>>`, so a species with no curated entry just yields
+  `undefined` defaults (no validation failure). `SpeciesDefault` is derived
+  from `speciesDefaultSchema` (`z.infer`), with `move` narrowed against
+  `allMoveNames` — typos and out-of-pool moves fail `regulationSchema.parse`.
+  73 species seeded for VGC 2026 Regulation Set M-A from the public
+  community spread sheet; future regulations add a sibling
+  `vgc-2026-m-*-defaults.ts` and re-point `currentRegulation`.
+
 ### 1.2.0
 
 - **`/sprites` subpath export.** New `getSpriteUrl(name, { shiny? })` returns a
