@@ -8,7 +8,36 @@
 import { Dex, type ID, type Item, type ModData, type Species } from '@pkmn/dex'
 import * as champions from '@pkmn/mods/champions'
 
-const dex = Dex.mod('champions' as ID, champions as ModData)
+import { SPECIES_ALIASES } from './aliases'
+import { championsMegaSpeciesPatch } from './constants/champions/mega-species-patch'
+
+// @pkmn/mods/champions ships Champions-only megas (Clefable-Mega, Greninja-Mega,
+// etc.) as legality entries only — no Pokedex/Species data. Without the patch,
+// `dex.species.get('clefablemega')` returns an empty Species and the calc has
+// no stats, types, or abilities to work with.
+const champData: ModData = {
+  ...(champions as ModData),
+  Species: {
+    ...((champions as ModData).Species ?? {}),
+    ...championsMegaSpeciesPatch,
+  },
+}
+const dex = Dex.mod('champions' as ID, champData)
+
+// Fold our typed SPECIES_ALIASES map into the dex's alias table so
+// `dex.species.get(alias)` honours the same mappings consumers get from
+// SPECIES_ALIASES.get(...) — single source of truth in species-aliases.ts.
+// ModData.Aliases is silently ignored by Dex.mod (its loader hard-reads the
+// shared @pkmn/dex DATA), so the override has to happen on the constructed
+// dex. Spread into a fresh object so we don't mutate the shared reference.
+//
+// Notable consequence: this also overrides upstream's 'Meowstic-Mega' →
+// male default with our 'Meowstic-Mega' → female mapping, since the stats
+// are identical and Floette/Meowstic users typically default to F.
+dex.data.Aliases = {
+  ...dex.data.Aliases,
+  ...Object.fromEntries(SPECIES_ALIASES),
+}
 
 // Prime the Learnsets table at module load so synchronous reads off
 // dex.data.Learnsets below (and in effectiveLearnset) don't return undefined.
