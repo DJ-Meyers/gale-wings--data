@@ -25,6 +25,8 @@ export interface ParsedPokemon {
   isCrit?: boolean
   abilityOn?: boolean
   boostedStat?: string
+  /** Explicit move base-power override, e.g. from a `150BP` token. Integer, 1..999. */
+  basePowerOverride?: number
   fieldConditions?: FieldConditions
 }
 

@@ -19,6 +19,20 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 1.4.0
+
+- **`basePowerOverride` on parse results and calc parameters.** Adds an optional
+  `basePowerOverride?: number` to the `ParsedPokemon` type and a matching
+  `basePowerOverride` field on `calcParametersSchema`
+  (`z.number().int().min(1).max(999).optional()`). The `1..999` sanity bound is
+  exported as `BASE_POWER_OVERRIDE_MIN` / `BASE_POWER_OVERRIDE_MAX` so the
+  `gale-wings--api` parser can reuse the exact same numbers when validating a
+  `<n>BP` token instead of duplicating them. The field is optional with **no**
+  default — "absent" stays distinguishable from "set," since the parser only
+  emits it when a base-power token is present. Because
+  `championsPokemonWithCalcParametersSchema` spreads `calcParametersSchema.shape`,
+  saved calcs round-trip the override with no further change.
+
 ### 1.3.0
 
 - **Per-regulation species defaults on `getSpecies()`.** The regulation now
