@@ -12,6 +12,8 @@ export {
 } from './champions/regulation'
 export { fieldConditionsSchema } from './field-conditions'
 export {
+  BASE_POWER_OVERRIDE_MAX,
+  BASE_POWER_OVERRIDE_MIN,
   calcParametersSchema,
   championsPokemonSchema,
   championsPokemonWithCalcParametersSchema,

@@ -18,6 +18,12 @@ import {
 } from './stats'
 import { uniqueArraySchema } from './utils'
 
+/** Sanity bounds for an explicit move base-power override. Real moves top out
+ *  around ~250 (Explosion) / 350 (Rage Fist); 999 is a generous theorycraft cap.
+ *  The `gale-wings--api` parser reuses this same bound when validating `<n>BP`. */
+export const BASE_POWER_OVERRIDE_MIN = 1
+export const BASE_POWER_OVERRIDE_MAX = 999
+
 const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
   const species = getSpecies(speciesName)
   return z.object({
@@ -73,6 +79,14 @@ const calcParametersSchema = z.object({
   boostedStat: z
     .enum(['', 'atk', 'def', 'spa', 'spd', 'spe', 'auto'])
     .default(''),
+  // Optional with no .default — "absent" must stay distinguishable from "set,"
+  // since the parser only emits this when a `<n>BP` token is present.
+  basePowerOverride: z
+    .number()
+    .int()
+    .min(BASE_POWER_OVERRIDE_MIN)
+    .max(BASE_POWER_OVERRIDE_MAX)
+    .optional(),
 })
 
 const championsPokemonWithCalcParametersSchema = (speciesName: ChampionsSpecies) =>

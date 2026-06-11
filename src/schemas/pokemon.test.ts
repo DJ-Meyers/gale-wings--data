@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { championsPokemonSchema, looseChampionsPokemonSchema } from './pokemon'
+import {
+  calcParametersSchema,
+  championsPokemonSchema,
+  looseChampionsPokemonSchema,
+} from './pokemon'
 
 const baseIncineroar = {
   species: 'Incineroar',
@@ -107,6 +111,57 @@ describe('looseChampionsPokemonSchema', () => {
     const result = looseChampionsPokemonSchema.safeParse({
       ...baseIncineroar,
       moves: ['Happy Hour'],
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('calcParametersSchema basePowerOverride', () => {
+  const baseCalc = {
+    teraType: '',
+    boosts: { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+    status: '',
+  }
+
+  it('should accept an in-range integer override', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      basePowerOverride: 150,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.basePowerOverride).toBe(150)
+    }
+  })
+
+  it('should leave basePowerOverride undefined when omitted (optional, no default)', () => {
+    const result = calcParametersSchema.safeParse(baseCalc)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.basePowerOverride).toBeUndefined()
+    }
+  })
+
+  it('should reject 0 (below min)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      basePowerOverride: 0,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject 1000 (above max)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      basePowerOverride: 1000,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject a non-integer override', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      basePowerOverride: 150.5,
     })
     expect(result.success).toBe(false)
   })
