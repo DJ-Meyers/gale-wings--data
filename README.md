@@ -19,6 +19,22 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 1.4.1
+
+- **`alliesFainted` and `hits` on parse results and calc parameters.** Adds two
+  optional fields in a single release. `alliesFainted?: number` (Supreme
+  Overlord-style fallen-ally scaling) is bound to integers `0..5`, exported as
+  `ALLIES_FAINTED_MIN` / `ALLIES_FAINTED_MAX`. `hits?: number` (multi-hit move
+  override, e.g. Icicle Spear) is bound to the permissive global integer range
+  `1..10`, exported as `HITS_MIN` / `HITS_MAX`; per-move validity (a move's own
+  multihit range) is enforced parser-side. Both land on the `ParsedPokemon` type
+  and on `calcParametersSchema`. Like `basePowerOverride`, both are optional with
+  **no** default — "absent" stays distinguishable from "set" (including an
+  explicit `0`), since the parser only emits each field when its matching token
+  is present. Because `championsPokemonWithCalcParametersSchema` spreads
+  `calcParametersSchema.shape`, saved calcs round-trip both fields with no
+  further change.
+
 ### 1.4.0
 
 - **`basePowerOverride` on parse results and calc parameters.** Adds an optional

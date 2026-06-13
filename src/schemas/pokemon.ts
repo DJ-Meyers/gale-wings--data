@@ -24,6 +24,17 @@ import { uniqueArraySchema } from './utils'
 export const BASE_POWER_OVERRIDE_MIN = 1
 export const BASE_POWER_OVERRIDE_MAX = 999
 
+/** Bounds for the Supreme Overlord fallen-ally count. The mechanic caps at 5
+ *  (the rest of a 6-mon party). The `gale-wings--api` parser reuses this bound. */
+export const ALLIES_FAINTED_MIN = 0
+export const ALLIES_FAINTED_MAX = 5
+
+/** Global bounds for a multi-hit override. The widest in-game range is 1..10
+ *  (Population Bomb hits 10). This is the permissive boundary-schema bound; the
+ *  parser narrows it to the specific move's multihit range. */
+export const HITS_MIN = 1
+export const HITS_MAX = 10
+
 const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
   const species = getSpecies(speciesName)
   return z.object({
@@ -87,6 +98,18 @@ const calcParametersSchema = z.object({
     .min(BASE_POWER_OVERRIDE_MIN)
     .max(BASE_POWER_OVERRIDE_MAX)
     .optional(),
+  // Optional, no .default — "absent" must stay distinguishable from a set value
+  // (incl. an explicit 0); the parser only emits these when the matching token
+  // is present.
+  alliesFainted: z
+    .number()
+    .int()
+    .min(ALLIES_FAINTED_MIN)
+    .max(ALLIES_FAINTED_MAX)
+    .optional(),
+  // Permissive global range; per-move validity (e.g. Icicle Spear 2–5) is
+  // enforced parser-side, mirroring how `move` is intentionally un-narrowed.
+  hits: z.number().int().min(HITS_MIN).max(HITS_MAX).optional(),
 })
 
 const championsPokemonWithCalcParametersSchema = (speciesName: ChampionsSpecies) =>

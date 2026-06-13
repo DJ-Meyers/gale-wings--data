@@ -27,6 +27,12 @@ export interface ParsedPokemon {
   boostedStat?: string
   /** Explicit move base-power override, e.g. from a `150BP` token. Integer, 1..999. */
   basePowerOverride?: number
+  /** Fallen-ally count for Supreme Overlord-style scaling, e.g. from a `Supreme Overlord 3` / `3 fainted` token. Integer, 0..5. */
+  alliesFainted?: number
+  /** Multi-hit count override, e.g. from a `5 hits` token. Integer. Valid range is
+   *  the move's own multihit range (e.g. Icicle Spear 2–5), enforced parser-side.
+   *  Maps to @smogon/calc `Move({ hits })`. */
+  hits?: number
   fieldConditions?: FieldConditions
 }
 

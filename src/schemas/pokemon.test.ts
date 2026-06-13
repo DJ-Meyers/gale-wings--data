@@ -166,3 +166,149 @@ describe('calcParametersSchema basePowerOverride', () => {
     expect(result.success).toBe(false)
   })
 })
+
+describe('calcParametersSchema alliesFainted', () => {
+  const baseCalc = {
+    teraType: '',
+    boosts: { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+    status: '',
+  }
+
+  it('should accept an in-range integer count', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: 3,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.alliesFainted).toBe(3)
+    }
+  })
+
+  it('should accept the min boundary 0', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: 0,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.alliesFainted).toBe(0)
+    }
+  })
+
+  it('should accept the max boundary 5', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: 5,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.alliesFainted).toBe(5)
+    }
+  })
+
+  it('should leave alliesFainted undefined when omitted (optional, no default)', () => {
+    const result = calcParametersSchema.safeParse(baseCalc)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.alliesFainted).toBeUndefined()
+    }
+  })
+
+  it('should reject 6 (above max)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: 6,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject -1 (below min)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: -1,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject a non-integer count', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      alliesFainted: 2.5,
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('calcParametersSchema hits', () => {
+  const baseCalc = {
+    teraType: '',
+    boosts: { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+    status: '',
+  }
+
+  it('should accept an in-range integer count', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 3,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.hits).toBe(3)
+    }
+  })
+
+  it('should accept the min boundary 1', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 1,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.hits).toBe(1)
+    }
+  })
+
+  it('should accept the max boundary 10', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 10,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.hits).toBe(10)
+    }
+  })
+
+  it('should leave hits undefined when omitted (optional, no default)', () => {
+    const result = calcParametersSchema.safeParse(baseCalc)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.hits).toBeUndefined()
+    }
+  })
+
+  it('should reject 0 (below min)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 0,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject 11 (above max)', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 11,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('should reject a non-integer count', () => {
+    const result = calcParametersSchema.safeParse({
+      ...baseCalc,
+      hits: 2.5,
+    })
+    expect(result.success).toBe(false)
+  })
+})
