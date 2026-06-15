@@ -2,6 +2,8 @@ import { toID } from '@smogon/calc'
 import { describe, expect, it } from 'vitest'
 
 import {
+  FIELD_CONDITION_ALIASES,
+  fieldConditionAliases,
   ITEM_ALIASES,
   itemAliases,
   moveAliases,
@@ -16,6 +18,7 @@ describe('alias maps have no colliding ids', () => {
     ['move', moveAliases],
     ['item', itemAliases],
     ['species', speciesAliases],
+    ['field-condition', fieldConditionAliases],
   ])('%s aliases are unique after normalization', (_label, aliases) => {
     const seen = new Map<string, string>()
     for (const [canonical, list] of Object.entries<readonly string[]>(aliases)) {
@@ -39,5 +42,35 @@ describe('berry shorthands', () => {
     expect(ITEM_ALIASES.get(toID('chople'))).toBe('Chople Berry')
     expect(ITEM_ALIASES.get(toID('occa'))).toBe('Occa Berry')
     expect(ITEM_ALIASES.get(toID('yache'))).toBe('Yache Berry')
+  })
+})
+
+describe('field-condition aliases', () => {
+  it('resolves Aurora Veil shorthands', () => {
+    expect(FIELD_CONDITION_ALIASES.get(toID('Veil'))).toBe('Aurora Veil')
+    expect(FIELD_CONDITION_ALIASES.get(toID('AVeil'))).toBe('Aurora Veil')
+    expect(FIELD_CONDITION_ALIASES.get(toID('VEIL'))).toBe('Aurora Veil')
+  })
+
+  it('resolves Fairy Aura shorthands (FAura / F-Aura)', () => {
+    // toID strips the hyphen, so 'FAura' and 'F-Aura' normalize to the same id.
+    expect(FIELD_CONDITION_ALIASES.get(toID('FAura'))).toBe('Fairy Aura')
+    expect(FIELD_CONDITION_ALIASES.get(toID('F-Aura'))).toBe('Fairy Aura')
+    expect(FIELD_CONDITION_ALIASES.get(toID('faura'))).toBe('Fairy Aura')
+  })
+
+  it('resolves Dark Aura shorthands (DAura / D-Aura)', () => {
+    expect(FIELD_CONDITION_ALIASES.get(toID('DAura'))).toBe('Dark Aura')
+    expect(FIELD_CONDITION_ALIASES.get(toID('D-Aura'))).toBe('Dark Aura')
+    expect(FIELD_CONDITION_ALIASES.get(toID('daura'))).toBe('Dark Aura')
+  })
+
+  it('resolves the remaining side-condition shorthands', () => {
+    expect(FIELD_CONDITION_ALIASES.get(toID('Screen'))).toBe('Light Screen')
+    expect(FIELD_CONDITION_ALIASES.get(toID('LS'))).toBe('Light Screen')
+    expect(FIELD_CONDITION_ALIASES.get(toID('Ref'))).toBe('Reflect')
+    expect(FIELD_CONDITION_ALIASES.get(toID('Refl'))).toBe('Reflect')
+    expect(FIELD_CONDITION_ALIASES.get(toID('TW'))).toBe('Tailwind')
+    expect(FIELD_CONDITION_ALIASES.get(toID('HH'))).toBe('Helping Hand')
   })
 })
