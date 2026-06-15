@@ -50,6 +50,7 @@ export const moveAliases = {
   Overheat: ['OH'],
   'Phantom Force': ['PF', 'PForce'],
   Poltergeist: ['Polt'],
+  'Population Bomb': ['PBomb', 'PB', 'Pop Bomb'],
   'Power Gem': ['PGem', 'PG', 'Gem'],
   'Power Whip': ['PW', 'PWhip'],
   'Quick Attack': ['QA'],
