@@ -13,6 +13,7 @@ export const vgc2026_MADefaults = {
   'Aggron-Mega': { nature: 'Careful', move: 'Body Press' },
   'Arcanine-Hisui': { nature: 'Adamant', move: 'Flare Blitz', ability: 'Rock Head' },
   Archaludon: { nature: 'Modest', move: 'Electro Shot', ability: 'Stamina' },
+  Azumarill: { nature: 'Adamant', move: 'Liquidation', ability: 'Huge Power' },
   Basculegion: { nature: 'Jolly', move: 'Wave Crash', ability: 'Adaptability' },
   'Blastoise-Mega': { nature: 'Modest', move: 'Water Spout' },
   'Camerupt-Mega': { nature: 'Quiet', move: 'Heat Wave' },
