@@ -1,4 +1,5 @@
 import { toID } from '@smogon/calc'
+import { fieldConditionAliases } from './field-condition-aliases'
 import { itemAliases } from './item-aliases'
 import { moveAliases } from './move-aliases'
 import { speciesAliases } from './species-aliases'
@@ -18,10 +19,12 @@ const buildAliasMap = <T extends string>(
 export const ITEM_ALIASES = buildAliasMap(itemAliases)
 export const SPECIES_ALIASES = buildAliasMap(speciesAliases)
 export const MOVE_ALIASES = buildAliasMap(moveAliases)
+export const FIELD_CONDITION_ALIASES = buildAliasMap(fieldConditionAliases)
 
 export type ItemAliasTarget = keyof typeof itemAliases
 export type SpeciesAliasTarget = keyof typeof speciesAliases
 export type MoveAliasTarget = keyof typeof moveAliases
+export type FieldConditionAliasTarget = keyof typeof fieldConditionAliases
 
 // Raw canonical → aliases (for clients doing autocomplete / display).
-export { itemAliases, speciesAliases, moveAliases }
+export { itemAliases, speciesAliases, moveAliases, fieldConditionAliases }
