@@ -7,10 +7,10 @@ import { speciesAliases } from './species-aliases'
 // modules. Canonical narrows to the data's literal keys, so adding a row
 // extends the target union for free.
 const buildAliasMap = <T extends string>(
-  data: Record<T, readonly string[]>,
+  data: Partial<Record<T, readonly string[]>>,
 ): Map<string, T> =>
   new Map(
-    Object.entries<readonly string[]>(data).flatMap(([canonical, aliases]) =>
+    (Object.entries(data) as [string, readonly string[]][]).flatMap(([canonical, aliases]) =>
       aliases.map((alias) => [toID(alias), canonical as T] as const),
     ),
   )
