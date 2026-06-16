@@ -72,6 +72,7 @@ describe('field-condition aliases', () => {
     expect(FIELD_CONDITION_ALIASES.get(toID('Refl'))).toBe('Reflect')
     expect(FIELD_CONDITION_ALIASES.get(toID('TW'))).toBe('Tailwind')
     expect(FIELD_CONDITION_ALIASES.get(toID('HH'))).toBe('Helping Hand')
+    expect(FIELD_CONDITION_ALIASES.get(toID('FG'))).toBe('Friend Guard')
   })
 
   it('resolves terrain shorthands', () => {
