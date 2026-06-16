@@ -16,6 +16,7 @@ export const fieldConditionAliases = {
   Reflect: ['Ref', 'Refl'],
   Tailwind: ['TW'],
   'Helping Hand': ['HH'],
+  'Friend Guard': ['FG'],
   'Fairy Aura': ['FAura', 'F-Aura'],
   'Dark Aura': ['DAura', 'D-Aura'],
   'Psychic Terrain': ['PTerrain', 'PsychicT', 'PTerr'],

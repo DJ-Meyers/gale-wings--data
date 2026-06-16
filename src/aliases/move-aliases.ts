@@ -24,7 +24,6 @@ export const moveAliases = {
   'Extreme Speed': ['Espeed'],
   'Fake Out': ['FO'],
   'Fiery Dance': ['FD'],
-  'Final Gambit': ['FG'],
   'Flare Blitz': ['Blitz', 'FB'],
   'Flip Turn': ['FT'],
   'Foul Play': ['FP'],
