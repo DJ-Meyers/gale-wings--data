@@ -27,17 +27,16 @@ describe('PARSE_CORPUS fixtures', () => {
     },
   )
 
+  // Per-side `pokemon.fieldConditions` is parser-internal transport state
+  // (parseInput writes everything it sees into the per-side blob; parseVsInput
+  // merges into the top-level). Locking onto it makes fixtures brittle under
+  // moving conditions across `vs`. Enforce that the corpus only asserts on the
+  // stable top-level merged result.
   it.each(PARSE_CORPUS.map((f) => [f.id, f] as const))(
-    '%s: per-side pokemon.fieldConditions is schema-valid when present',
+    '%s: per-side pokemon.fieldConditions is omitted (transport state, not in contract)',
     (_id, fixture) => {
-      const sides = [fixture.expected.attacker, fixture.expected.defender]
-      for (const side of sides) {
-        if (side.pokemon.fieldConditions) {
-          expect(() =>
-            fieldConditionsSchema.parse(side.pokemon.fieldConditions),
-          ).not.toThrow()
-        }
-      }
+      expect(fixture.expected.attacker.pokemon.fieldConditions).toBeUndefined()
+      expect(fixture.expected.defender.pokemon.fieldConditions).toBeUndefined()
     },
   )
 })

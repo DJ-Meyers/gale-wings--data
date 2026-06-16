@@ -20,11 +20,11 @@ export interface VsParseFixtureExpected {
  *
  * Each fixture is meant to drive five layers:
  *  1. data tests — `fieldConditionsSchema.parse(fixture.expected.fieldConditions)`
- *  2. api parser tests — `expect(parseVsInput(fixture.input)).toEqual(fixture.expected)`
+ *  2. api parser tests — `expect(parseVsInput(fixture.input)).toMatchObject(fixture.expected)`
  *  3. client `applyParseResult` tests — `applyParseResult(fixture.expected)` then
  *     assert the store landed in the right shape
  *  4. api post-deploy smoke — POST `fixture.input` to `/api/trpc/parser.parseVs`,
- *     compare to `fixture.expected`
+ *     compare to `fixture.expected` with `toMatchObject` semantics
  *  5. client post-deploy smoke (Playwright) — type `fixture.input` into the
  *     real UI, assert visible toggle states match `fixture.expected`
  */
@@ -42,11 +42,27 @@ export interface ParseFixture {
  * stale. Resolve by deciding which is correct, then updating the loser.
  *
  * Buckets:
- *  - `minimal-*`     — single-field anchors
+ *  - `minimal-*`     — single-field anchors with NON-default tokens so the
+ *                      assertions prove parsing rather than locking the
+ *                      species-curated defaults system
  *  - `alias-*`       — exercises alias-map resolution
  *  - `field-*`       — exercises weather / terrain / side conditions
  *  - `negative-*`    — empty / malformed / unmatched-token inputs
  *  - `kitchen-sink-*` — long realistic inputs hitting many passes at once
+ *
+ * **Consumer contract — use `toMatchObject`, not `toEqual`.** Fixtures
+ * intentionally omit `pokemon.fieldConditions` from per-side blocks; only the
+ * top-level `expected.fieldConditions` is the stable contract. The reason:
+ * per-side `pokemon.fieldConditions` is transport state — `parseInput` runs
+ * once per side and writes every condition (weather, terrain, gravity, ruin,
+ * attackerSide, defenderSide) into the *processed* side's blob regardless of
+ * which schema slot it ultimately lands in. `parseVsInput` then merges both
+ * blobs into one top-level `fieldConditions` (see `mergeFieldConditions` in
+ * `gale-wings--api/packages/server/src/parser/parser.ts`). That merge is
+ * positionally invariant — moving `sun` or `Tailwind` from one side of `vs`
+ * to the other produces the same top-level result — but the per-side
+ * transport differs. Asserting on the merged top-level only keeps fixtures
+ * stable under user-equivalent rewrites of the input.
  *
  * Adding a fixture is the lowest-cost way to extend coverage across all five
  * layers (data schema check, api parser, client store, api smoke, client
@@ -54,25 +70,34 @@ export interface ParseFixture {
  */
 export const PARSE_CORPUS: readonly ParseFixture[] = [
   // --- minimal ---
+  // Garchomp default: { Adamant, Earthquake, Rough Skin }
+  // Hatterene default: { Quiet, Dazzling Gleam, Magic Bounce }
+  // Each fixture picks NON-default move + nature so the assertions can't
+  // be satisfied by the curated-defaults path alone.
   {
     id: 'minimal-species-vs-species',
-    input: 'Garchomp vs Hatterene',
-    exercises: ['species', 'vs split'],
+    input: 'Jolly Garchomp Outrage vs Bold Hatterene Mystical Fire',
+    exercises: [
+      'species',
+      'vs split',
+      'non-default move (Outrage vs Earthquake; Mystical Fire vs Dazzling Gleam)',
+      'non-default nature (Jolly vs Adamant; Bold vs Quiet)',
+    ],
     expected: {
       attacker: {
         pokemon: {
+          nature: 'Jolly',
           species: 'Garchomp',
-          move: 'Earthquake',
-          nature: 'Adamant',
+          move: 'Outrage',
           ability: 'Rough Skin',
         },
         errors: [],
       },
       defender: {
         pokemon: {
+          nature: 'Bold',
           species: 'Hatterene',
-          move: 'Dazzling Gleam',
-          nature: 'Quiet',
+          move: 'Mystical Fire',
           ability: 'Magic Bounce',
         },
         errors: [],
@@ -82,13 +107,16 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
   },
   {
     id: 'minimal-attacker-only',
-    input: 'Garchomp Earthquake',
-    exercises: ['attacker-only (no vs)', 'move'],
+    input: 'Garchomp Outrage',
+    exercises: [
+      'attacker-only (no vs)',
+      'non-default move (Outrage vs Earthquake)',
+    ],
     expected: {
       attacker: {
         pokemon: {
           species: 'Garchomp',
-          move: 'Earthquake',
+          move: 'Outrage',
           nature: 'Adamant',
           ability: 'Rough Skin',
         },
@@ -103,8 +131,13 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
   },
   {
     id: 'minimal-nature-and-stats',
-    input: '32+ SpA Gardevoir Dazzling Gleam vs 4 HP Garchomp',
-    exercises: ['statPoints', 'nature inference', 'move'],
+    input: '32+ SpA Gardevoir Dazzling Gleam vs 4 HP Jolly Garchomp Outrage',
+    exercises: [
+      'statPoints (attacker invested, defender HP)',
+      'nature inference (Modest from 32+ SpA on attacker)',
+      'non-default nature (Jolly vs Adamant on defender)',
+      'non-default move (Outrage vs Earthquake on defender)',
+    ],
     expected: {
       attacker: {
         pokemon: {
@@ -119,9 +152,9 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
       defender: {
         pokemon: {
           statPoints: { hp: 4 },
+          nature: 'Jolly',
           species: 'Garchomp',
-          move: 'Earthquake',
-          nature: 'Adamant',
+          move: 'Outrage',
           ability: 'Rough Skin',
         },
         errors: [],
@@ -180,7 +213,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     expected: {
       attacker: {
         pokemon: {
-          fieldConditions: { terrain: 'Psychic' },
           species: 'Hatterene',
           move: 'Expanding Force',
           statPoints: { spa: 32 },
@@ -191,7 +223,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
       },
       defender: {
         pokemon: {
-          fieldConditions: { defenderSide: { isFriendGuard: true } },
           species: 'Venusaur-Mega',
           move: 'Sludge Bomb',
           nature: 'Modest',
@@ -229,7 +260,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
           move: 'Heat Wave',
           nature: 'Serious',
           ability: 'Drought',
-          fieldConditions: { weather: 'Sun' },
           item: 'Charizardite Y',
         },
         errors: [],
@@ -251,10 +281,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     expected: {
       attacker: {
         pokemon: {
-          fieldConditions: {
-            weather: 'Sun',
-            attackerSide: { isTailwind: true },
-          },
           species: 'Hatterene',
           move: 'Dazzling Gleam',
           nature: 'Quiet',
@@ -264,9 +290,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
       },
       defender: {
         pokemon: {
-          fieldConditions: {
-            defenderSide: { isReflect: true, isFriendGuard: true },
-          },
           species: 'Incineroar',
           move: 'Flare Blitz',
           nature: 'Careful',
@@ -288,7 +311,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     expected: {
       attacker: {
         pokemon: {
-          fieldConditions: { terrain: 'Psychic' },
           species: 'Hatterene',
           move: 'Expanding Force',
           nature: 'Quiet',
@@ -298,7 +320,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
       },
       defender: {
         pokemon: {
-          fieldConditions: { terrain: 'Psychic' },
           species: 'Garchomp',
           move: 'Earthquake',
           nature: 'Adamant',
@@ -323,7 +344,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     expected: {
       attacker: {
         pokemon: {
-          fieldConditions: { attackerSide: { isHelpingHand: true } },
           item: 'Black Glasses',
           species: 'Kingambit',
           move: 'Sucker Punch',
@@ -334,10 +354,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
       },
       defender: {
         pokemon: {
-          fieldConditions: {
-            defenderSide: { isAuroraVeil: true },
-            weather: 'Snow',
-          },
           species: 'Froslass-Mega',
           move: 'Blizzard',
           nature: 'Timid',
@@ -491,7 +507,6 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     expected: {
       attacker: {
         pokemon: {
-          fieldConditions: { weather: 'Sand' },
           ability: 'Sand Force',
           species: 'Excadrill',
           move: 'Sand Tomb',
