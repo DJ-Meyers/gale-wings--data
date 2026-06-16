@@ -19,6 +19,39 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 1.6.0
+
+- **`/test-fixtures` subpath export.** Adds `PARSE_CORPUS`, a shared
+  cross-repo fixture corpus for `parseVs`. Each fixture is a `parseVs` input
+  paired with its expected `VsParseResult` (`{ attacker, defender,
+  fieldConditions }`) plus free-form `exercises` tags describing what the
+  fixture is meant to cover. The corpus is the single source of truth for
+  parser behavior — api parser tests, client `applyParseResult` tests, and
+  post-deploy smoke jobs all loop the same fixtures, so adding one row
+  extends coverage at every layer. Ships with 15 fixtures across five
+  buckets (minimal / alias-heavy / field-condition-heavy / negative /
+  kitchen-sink). Type exports: `ParseFixture`, `VsParseFixtureExpected`.
+  **Consumer contract: use `toMatchObject`, not `toEqual`** — fixtures
+  intentionally omit `pokemon.fieldConditions` from per-side blocks because
+  that's parser-internal transport state, not stable contract. Only
+  top-level `expected.fieldConditions` is asserted.
+
+### 1.5.0
+
+- **HP fields on `ParsedPokemon`: `hpPercent`, `currentHp`, `maxHp`.** Lets the
+  parser surface current HP from two user-friendly input forms. A fraction
+  like `165/177` populates `currentHp` and `maxHp` (and derives `hpPercent`);
+  a percent like `85%` populates `hpPercent` only. All three are optional and
+  carry no defaults — the parser only emits them when an HP token is present.
+  The fields feed HP-scaling moves (Eruption / Water Spout / Reversal /
+  Flail). The fraction form is preferred where the user provides it because
+  `@smogon/calc` takes a raw `curHP`, not a percentage, so the fraction path
+  avoids the percent→raw rounding the `%` form requires. When only
+  `hpPercent` is set, the client converts to raw `curHP` using its locally
+  computed max HP for the spread; when `currentHp`/`maxHp` are set, the
+  client can cross-check `maxHp` against its own computed value and hand
+  `currentHp` to the calc verbatim.
+
 ### 1.4.1
 
 - **`alliesFainted` and `hits` on parse results and calc parameters.** Adds two
