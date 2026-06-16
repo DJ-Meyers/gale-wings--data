@@ -73,4 +73,23 @@ describe('field-condition aliases', () => {
     expect(FIELD_CONDITION_ALIASES.get(toID('TW'))).toBe('Tailwind')
     expect(FIELD_CONDITION_ALIASES.get(toID('HH'))).toBe('Helping Hand')
   })
+
+  it('resolves terrain shorthands', () => {
+    expect(FIELD_CONDITION_ALIASES.get(toID('PTerrain'))).toBe('Psychic Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('PsychicT'))).toBe('Psychic Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('PTerr'))).toBe('Psychic Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('ETerrain'))).toBe(
+      'Electric Terrain',
+    )
+    expect(FIELD_CONDITION_ALIASES.get(toID('ElectricT'))).toBe(
+      'Electric Terrain',
+    )
+    expect(FIELD_CONDITION_ALIASES.get(toID('ETerr'))).toBe('Electric Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('GTerrain'))).toBe('Grassy Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('GrassyT'))).toBe('Grassy Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('GTerr'))).toBe('Grassy Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('MTerrain'))).toBe('Misty Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('MistyT'))).toBe('Misty Terrain')
+    expect(FIELD_CONDITION_ALIASES.get(toID('MTerr'))).toBe('Misty Terrain')
+  })
 })

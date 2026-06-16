@@ -18,4 +18,8 @@ export const fieldConditionAliases = {
   'Helping Hand': ['HH'],
   'Fairy Aura': ['FAura', 'F-Aura'],
   'Dark Aura': ['DAura', 'D-Aura'],
+  'Psychic Terrain': ['PTerrain', 'PsychicT', 'PTerr'],
+  'Electric Terrain': ['ETerrain', 'ElectricT', 'ETerr'],
+  'Grassy Terrain': ['GTerrain', 'GrassyT', 'GTerr'],
+  'Misty Terrain': ['MTerrain', 'MistyT', 'MTerr'],
 } as const satisfies Partial<Record<FieldConditionAliasName, readonly string[]>>

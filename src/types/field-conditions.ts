@@ -24,5 +24,21 @@ export type SideConditionName =
  */
 export type FieldWideConditionName = 'Gravity' | 'Fairy Aura' | 'Dark Aura'
 
+/**
+ * Display-name union for terrains. These are "<Type> Terrain" rather than the
+ * bare `FieldConditions['terrain']` values (`Psychic`, `Electric`, …) so the
+ * alias map's canonical column stays unambiguous and self-describing — a key
+ * of `Psychic` would collide visually with the type, status, and move-category
+ * meanings of that word.
+ */
+export type TerrainName =
+  | 'Electric Terrain'
+  | 'Grassy Terrain'
+  | 'Misty Terrain'
+  | 'Psychic Terrain'
+
 /** Canonical-name constraint for the `fieldConditionAliases` map. */
-export type FieldConditionAliasName = SideConditionName | FieldWideConditionName
+export type FieldConditionAliasName =
+  | SideConditionName
+  | FieldWideConditionName
+  | TerrainName
