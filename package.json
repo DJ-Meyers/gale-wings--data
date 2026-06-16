@@ -1,6 +1,6 @@
 {
   "name": "@dj-meyers/gale-wings",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "Shared schemas, types, constants, and aliases for Gale Wings (zod schemas, derived domain types, regulation data, and alias maps).",
   "private": false,
   "type": "module",
@@ -31,6 +31,10 @@
     "./aliases": {
       "types": "./dist/aliases/index.d.ts",
       "import": "./dist/aliases/index.js"
+    },
+    "./test-fixtures": {
+      "types": "./dist/test-fixtures/index.d.ts",
+      "import": "./dist/test-fixtures/index.js"
     }
   },
   "scripts": {
