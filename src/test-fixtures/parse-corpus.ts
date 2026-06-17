@@ -163,6 +163,155 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     },
   },
 
+  // --- minimal: per-pokemon damage-calc modifiers ---
+  // Each fixture isolates one ParsedPokemon key the rest of the corpus
+  // doesn't cover. Drives Bucket 2b's POKEMON_COVERAGE_EXEMPTIONS list down.
+  {
+    id: 'minimal-status-brn',
+    input: 'brn Garchomp vs Hatterene',
+    exercises: ['status:brn (attacker; 3-letter code alias)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          status: 'brn',
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-crit',
+    input: 'Garchomp crit vs Hatterene',
+    exercises: ['isCrit (attacker)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          isCrit: true,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-base-power-override',
+    input: 'Garchomp 120BP vs Hatterene',
+    exercises: ['basePowerOverride:120 (attacker; glued <digits>BP form)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          basePowerOverride: 120,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-hp-percent',
+    input: 'Garchomp vs 50% Hatterene',
+    exercises: ['hpPercent:50 (defender; % form — only hpPercent populated)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          hpPercent: 50,
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    // Fraction form: both operands MUST exceed 32 to disambiguate from the
+    // statPoints shorthand pass. Sets currentHp + maxHp from the literals;
+    // hpPercent is computed as currentHp / maxHp * 100.
+    id: 'minimal-hp-fraction',
+    input: 'Garchomp vs 100/177 Hatterene',
+    exercises: [
+      'currentHp:100 (defender)',
+      'maxHp:177 (defender)',
+      'hpPercent: computed from fraction (100/177 ≈ 56.497)',
+      'both operands > 32 to disambiguate from statPoints shorthand',
+    ],
+    expected: {
+      attacker: {
+        pokemon: {
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          currentHp: 100,
+          maxHp: 177,
+          hpPercent: 56.49717514124294,
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+
   // --- alias-heavy ---
   {
     id: 'alias-maus-popbomb-incin',
