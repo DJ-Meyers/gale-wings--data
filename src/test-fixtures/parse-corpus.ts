@@ -163,6 +163,248 @@ export const PARSE_CORPUS: readonly ParseFixture[] = [
     },
   },
 
+  // --- minimal: per-pokemon damage-calc modifiers ---
+  // Each fixture isolates one ParsedPokemon key the rest of the corpus
+  // doesn't cover. Drives Bucket 2b's POKEMON_COVERAGE_EXEMPTIONS list down.
+  {
+    id: 'minimal-status-brn',
+    input: 'brn Garchomp vs Hatterene',
+    exercises: ['status:brn (attacker; 3-letter code alias)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          status: 'brn',
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-crit',
+    input: 'Garchomp crit vs Hatterene',
+    exercises: ['isCrit (attacker)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          isCrit: true,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-base-power-override',
+    input: 'Garchomp 120BP vs Hatterene',
+    exercises: ['basePowerOverride:120 (attacker; glued <digits>BP form)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          basePowerOverride: 120,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    id: 'minimal-hp-percent',
+    input: 'Garchomp vs 50% Hatterene',
+    exercises: ['hpPercent:50 (defender; % form — only hpPercent populated)'],
+    expected: {
+      attacker: {
+        pokemon: {
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          hpPercent: 50,
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    // Fraction form: at least one operand must exceed 32 to disambiguate
+    // from the statPoints shorthand pass. Sets currentHp + maxHp from the
+    // literals; hpPercent is computed as currentHp / maxHp * 100.
+    id: 'minimal-hp-fraction',
+    input: 'Garchomp vs 100/177 Hatterene',
+    exercises: [
+      'currentHp:100 (defender)',
+      'maxHp:177 (defender)',
+      'hpPercent: computed from fraction (100/177 ≈ 56.497)',
+      'both operands > 32 (canonical case)',
+    ],
+    expected: {
+      attacker: {
+        pokemon: {
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: {
+          currentHp: 100,
+          maxHp: 177,
+          hpPercent: 56.49717514124294,
+          species: 'Hatterene',
+          move: 'Dazzling Gleam',
+          nature: 'Quiet',
+          ability: 'Magic Bounce',
+        },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    // Edge: current HP of 1 (e.g., Endeavor scenarios, Reversal/Flail
+    // breakpoint testing). Locks in the "either operand > 32 → HP
+    // fraction" rule — current=1 looks like a statPoint operand, but
+    // max=177 > 32 forces HP-fraction classification.
+    id: 'minimal-hp-fraction-low-current',
+    input: '1/177 Garchomp',
+    exercises: [
+      'currentHp:1 (attacker; "1 HP remaining" scenarios)',
+      'maxHp:177 (attacker)',
+      'either operand > 32 → HP fraction (not both required)',
+    ],
+    expected: {
+      attacker: {
+        pokemon: {
+          currentHp: 1,
+          maxHp: 177,
+          hpPercent: 0.5649717514124294,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: { nature: 'Serious' },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    // Trailing `HP` keyword after a fraction is consumed (not left as an
+    // unmatched token). When the fraction has already classified itself
+    // as HP, a redundant `HP` keyword is annotation, not garbage.
+    id: 'minimal-hp-fraction-trailing-hp-keyword',
+    input: '100/177 HP Garchomp',
+    exercises: [
+      'currentHp:100, maxHp:177 (attacker)',
+      'trailing `HP` keyword consumed (not left as unmatched)',
+    ],
+    expected: {
+      attacker: {
+        pokemon: {
+          currentHp: 100,
+          maxHp: 177,
+          hpPercent: 56.49717514124294,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: { nature: 'Serious' },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+  {
+    // Combines low-current edge with trailing-HP-keyword consumption.
+    // 202 is a realistic max HP for high-bulk specially-defensive
+    // spreads (e.g., Pelipper, AV setups).
+    id: 'minimal-hp-fraction-low-current-trailing-hp-keyword',
+    input: '1/202 HP Garchomp',
+    exercises: [
+      'currentHp:1, maxHp:202 (attacker; low current + explicit HP keyword)',
+      'either operand > 32 → HP fraction',
+      'trailing `HP` keyword consumed',
+    ],
+    expected: {
+      attacker: {
+        pokemon: {
+          currentHp: 1,
+          maxHp: 202,
+          hpPercent: 0.49504950495049505,
+          species: 'Garchomp',
+          move: 'Earthquake',
+          nature: 'Adamant',
+          ability: 'Rough Skin',
+        },
+        errors: [],
+      },
+      defender: {
+        pokemon: { nature: 'Serious' },
+        errors: [],
+      },
+      fieldConditions: {},
+    },
+  },
+
   // --- alias-heavy ---
   {
     id: 'alias-maus-popbomb-incin',
