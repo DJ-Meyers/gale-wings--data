@@ -31,15 +31,19 @@ describe('championsMovesSchema', () => {
     },
   )
 
-  it.each([
-    'Happy Hour',
-    'Hidden Power',
-    'Splash',
-    'Tera Blast',
-    'Not A Real Move',
-  ])('should reject non-Champions move %s', (name) => {
-    expect(championsMovesSchema.safeParse(name).success).toBe(false)
-  })
+  // Hidden Power and Tera Blast were rejected under M-A because no legal
+  // species' own-learnset emitted them; in M-B their learners (Sceptile,
+  // Blaziken, Annihilape, Gholdengo, …) joined the legal pool and the moves
+  // are now in `legalMoves` as a side-effect. Filtering them out is a
+  // Champions-rules concern handled outside this schema (Tera mechanics gate
+  // for Tera Blast, etc.); the schema continues to reject moves that no
+  // legal species learns.
+  it.each(['Happy Hour', 'Splash', 'Not A Real Move'])(
+    'should reject non-Champions move %s',
+    (name) => {
+      expect(championsMovesSchema.safeParse(name).success).toBe(false)
+    },
+  )
 
   it.each(['Spore', 'Milk Drink', 'Soft-Boiled', 'Power Shift'])(
     'should reject move %s (no Champions-legal species learns it)',
