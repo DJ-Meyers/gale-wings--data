@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@pkmn/data':
-        specifier: ^0.10.9
-        version: 0.10.9
+        specifier: ^0.10.10
+        version: 0.10.10
       '@pkmn/dex':
-        specifier: ^0.10.9
-        version: 0.10.9
+        specifier: ^0.10.10
+        version: 0.10.10
       '@pkmn/mods':
-        specifier: ^0.10.9
-        version: 0.10.9
+        specifier: ^0.10.10
+        version: 0.10.10
       '@smogon/calc':
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: ^0.11.0
+        version: 0.11.0
       zod:
         specifier: ^4.3.6
         version: 4.4.3
@@ -385,17 +385,17 @@ packages:
   '@oxc-project/types@0.133.0':
     resolution: {integrity: sha512-KzkdCd6Uxqnf6l3HOw1xfatAlUURA0g14cvBYFyJ5SaNOQbOUvBr9PKArcPcrNIeRsBdgcUzOGrhKveVpvOIGA==}
 
-  '@pkmn/data@0.10.9':
-    resolution: {integrity: sha512-VAXcHvQNW0AYDlsms64/9wlTNF3grqtpSjHeQoV+U6kyOAg2BqqERjiRUZToF+Zv5xww+HPjm6MaTMiLnNDc9g==}
+  '@pkmn/data@0.10.10':
+    resolution: {integrity: sha512-5EsAgMCUljqQYpadoVYl3jGcJfkG6gDMENdfkvYxz/Jx569D9Y2RNhHCfld1ir2ADZEpF8kZzokEmFeavFzWXQ==}
 
-  '@pkmn/dex-types@0.10.9':
-    resolution: {integrity: sha512-EPHMWM+JckpaT58VnNcazH6s6D//DmvXVqCJFUn8id19OSZgcIGqg62TJFebQ+kWeCHKcXzDX8UMxRzBjaJJXA==}
+  '@pkmn/dex-types@0.10.10':
+    resolution: {integrity: sha512-6tXyvC+xNhDqzbnOriNIF8RqQf/FevfLeJmuXTsFZYNkQjhE4JS6JVUcJCVpq8Aj86tmJqPFRVRZp5v8ZPFwyg==}
 
-  '@pkmn/dex@0.10.9':
-    resolution: {integrity: sha512-MzNQmIDrVb7kAheSvwD3fZm2gZRlsFKnKtp8FXHgVFlkTqaD0bv1M4ndFXicTKlsmeYX4WP+3mGZqFgKQTwahA==}
+  '@pkmn/dex@0.10.10':
+    resolution: {integrity: sha512-Hlw+HHaizSeVW/qsaUElnpV8jG93GIAy/c6QuH1cnLy2mplkQ3JxkxIIbIxR5bX5yEhjeXnpAeS7oStVp+Tl8A==}
 
-  '@pkmn/mods@0.10.9':
-    resolution: {integrity: sha512-8CF00ql7zMqEkaa/mg8i60f4DZrUvGLrXCXkgWWzLIcFtra8L4DHhGvqCwBM1iowrkhxJ47qZlqN78tK57mkbw==}
+  '@pkmn/mods@0.10.10':
+    resolution: {integrity: sha512-18HcKCFDztly6H97wXAUB4mTLrgFtA6m++0pRG5DMRDWEULpPrs+rOXxEGmclkmMXZaXGmrGUIRpCz3NZ8YQww==}
 
   '@pkmn/types@4.0.0':
     resolution: {integrity: sha512-gR2s/pxJYEegek1TtsYCQupNR3d5hMlcJFsiD+2LyfKr4tc+gETTql47tWLX5mFSbPcbXh7f4+7txlMIDoZx/g==}
@@ -636,8 +636,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@smogon/calc@0.10.0':
-    resolution: {integrity: sha512-VmtTDVjF4z1Yzx1QN7NbsEcRLBAZGv/NVlb1ZK1//uppNmIg3Iqp7hDERGSM0FlmdogPEqw7iqY/3RuMSYPkmw==}
+  '@smogon/calc@0.11.0':
+    resolution: {integrity: sha512-ixP+IgQhI12R68FXxyt8+f4EZM/jdqBXZ2oCKu5zuUWXls4kYbIVdgE7t6+pkn/y6VxU+cXJhRgMkiU7wG8JHQ==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -1337,21 +1337,21 @@ snapshots:
 
   '@oxc-project/types@0.133.0': {}
 
-  '@pkmn/data@0.10.9':
+  '@pkmn/data@0.10.10':
     dependencies:
-      '@pkmn/dex-types': 0.10.9
+      '@pkmn/dex-types': 0.10.10
 
-  '@pkmn/dex-types@0.10.9':
+  '@pkmn/dex-types@0.10.10':
     dependencies:
       '@pkmn/types': 4.0.0
 
-  '@pkmn/dex@0.10.9':
+  '@pkmn/dex@0.10.10':
     dependencies:
-      '@pkmn/dex-types': 0.10.9
+      '@pkmn/dex-types': 0.10.10
 
-  '@pkmn/mods@0.10.9':
+  '@pkmn/mods@0.10.10':
     dependencies:
-      '@pkmn/dex-types': 0.10.9
+      '@pkmn/dex-types': 0.10.10
 
   '@pkmn/types@4.0.0': {}
 
@@ -1481,7 +1481,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.61.0':
     optional: true
 
-  '@smogon/calc@0.10.0':
+  '@smogon/calc@0.11.0':
     dependencies:
       '@types/node': 18.19.130
 

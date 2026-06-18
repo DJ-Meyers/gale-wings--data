@@ -45,10 +45,9 @@ describe('effectiveLearnset', () => {
   })
 })
 
-describe('championsMegaSpeciesPatch', () => {
-  // Spot-check entries patched into the Species table — these don't exist
-  // in @pkmn/dex or @pkmn/mods/champions's Pokedex, so without the patch
-  // dex.species.get(...) returns an empty Species with no stats/types.
+describe('Champions Mega species', () => {
+  // @pkmn/mods/champions (0.10.10+) carries Pokedex/Species data for these
+  // natively, so they resolve directly with no local patch.
   it('should resolve Clefable-Mega with Fairy/Flying typing and Magic Bounce', () => {
     const mega = getSpecies('clefablemega')
     expect(mega.exists).toBe(true)
@@ -66,10 +65,10 @@ describe('championsMegaSpeciesPatch', () => {
     expect(mega.baseStats.spe).toBe(142)
   })
 
-  it('should resolve Floette-Mega off Floette-Eternal (the actual stone holder)', () => {
+  it('should resolve Floette-Mega with Fairy typing and Fairy Aura', () => {
     const mega = getSpecies('floettemega')
     expect(mega.exists).toBe(true)
-    expect(mega.baseSpecies).toBe('Floette-Eternal')
+    expect(mega.baseSpecies).toBe('Floette')
     expect(mega.abilities[0]).toBe('Fairy Aura')
     expect(mega.requiredItem).toBe('Floettite')
   })
@@ -82,7 +81,7 @@ describe('Meowstic-Mega gender fallback', () => {
   it('should resolve bare Meowstic-Mega to the female form via dex.species.get', () => {
     const mega = getSpecies('Meowstic-Mega')
     expect(mega.name).toBe('Meowstic-F-Mega')
-    expect(mega.baseSpecies).toBe('Meowstic-F')
+    expect(mega.baseSpecies).toBe('Meowstic')
   })
 
   it('should resolve bare Meowstic-Mega to the female form via SPECIES_ALIASES', () => {
@@ -114,10 +113,7 @@ describe('getSpecies defaults', () => {
   })
 })
 
-describe('patched megas legality', () => {
-  // These megas only exist as legality entries in @pkmn/mods/champions's
-  // FormatsData; the regulation snapshot must list them for the patch to be
-  // reachable in-game.
+describe('Champions megas legality', () => {
   it.each([
     'Clefable-Mega',
     'Greninja-Mega',

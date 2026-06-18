@@ -1,33 +1,22 @@
 // Curated per-species / per-item accessors over the @pkmn/mods/champions dex.
 // The raw Dex instance is intentionally NOT exported — consumers go through
 // these helpers for per-entity lookups, and through `currentRegulation` (or a
-// named regulation) for legality questions. This keeps the mod as an
-// implementation detail of shared-types rather than a public surface callers
-// depend on directly.
+// named regulation) for legality questions. The mod is what trims learnsets
+// to Champions-legal moves and pins forme metadata (e.g. Floette-Mega's
+// baseSpecies → Floette-Eternal); plain @pkmn/dex carries Champions Megas
+// natively now but still over-includes the moves Champions removes.
 
 import { Dex, type ID, type Item, type ModData, type Species } from '@pkmn/dex'
 import * as champions from '@pkmn/mods/champions'
 
 import { SPECIES_ALIASES } from './aliases'
-import { championsMegaSpeciesPatch } from './constants/champions/mega-species-patch'
 import { currentRegulation } from './constants/champions/regulation'
 import type {
   AllSpeciesName,
   SpeciesDefault,
 } from './types/champions/regulation'
 
-// @pkmn/mods/champions ships Champions-only megas (Clefable-Mega, Greninja-Mega,
-// etc.) as legality entries only — no Pokedex/Species data. Without the patch,
-// `dex.species.get('clefablemega')` returns an empty Species and the calc has
-// no stats, types, or abilities to work with.
-const champData: ModData = {
-  ...(champions as ModData),
-  Species: {
-    ...((champions as ModData).Species ?? {}),
-    ...championsMegaSpeciesPatch,
-  },
-}
-const dex = Dex.mod('champions' as ID, champData)
+const dex = Dex.mod('champions' as ID, champions as ModData)
 
 // Fold our typed SPECIES_ALIASES map into the dex's alias table so
 // `dex.species.get(alias)` honours the same mappings consumers get from
@@ -91,13 +80,13 @@ export const getAbilitiesOf = (speciesName: string): string[] =>
 
 // Threshold separating "additive delta" formes (Rotom appliance: 1 move each)
 // from "standalone learnset" formes (Alolan/Galarian/Hisuian/Paldean variants
-// and gender forms: 41+ moves each). The Champions dex has no entries in
-// between, so any low value safely partitions; 5 leaves margin for future
-// additive formes that carry a handful of signature moves.
+// and gender forms: 41+ moves each). Gen 9 has no entries in between, so any
+// low value safely partitions; 5 leaves margin for future additive formes
+// that carry a handful of signature moves.
 const ADDITIVE_FORME_LEARNSET_MAX = 5
 
-// Return the effective learnset for a species. The Champions dex stores
-// formes in three distinct shapes:
+// Return the effective learnset for a species. Gen 9 stores formes in three
+// distinct shapes:
 //   - Empty own (megas, Origin, battle-only formes like Cramorant-Gulping):
 //     learnset comes entirely from the base species.
 //   - Tiny own (Rotom-Wash/Heat/Frost/Fan/Mow — 1 signature move each):
