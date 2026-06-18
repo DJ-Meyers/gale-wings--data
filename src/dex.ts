@@ -1,33 +1,22 @@
 // Curated per-species / per-item accessors over the @pkmn/mods/champions dex.
 // The raw Dex instance is intentionally NOT exported — consumers go through
 // these helpers for per-entity lookups, and through `currentRegulation` (or a
-// named regulation) for legality questions. This keeps the mod as an
-// implementation detail of shared-types rather than a public surface callers
-// depend on directly.
+// named regulation) for legality questions. The mod is what trims learnsets
+// to Champions-legal moves and pins forme metadata (e.g. Floette-Mega's
+// baseSpecies → Floette-Eternal); plain @pkmn/dex carries Champions Megas
+// natively now but still over-includes the moves Champions removes.
 
 import { Dex, type ID, type Item, type ModData, type Species } from '@pkmn/dex'
 import * as champions from '@pkmn/mods/champions'
 
 import { SPECIES_ALIASES } from './aliases'
-import { championsMegaSpeciesPatch } from './constants/champions/mega-species-patch'
 import { currentRegulation } from './constants/champions/regulation'
 import type {
   AllSpeciesName,
   SpeciesDefault,
 } from './types/champions/regulation'
 
-// @pkmn/mods/champions ships Champions-only megas (Clefable-Mega, Greninja-Mega,
-// etc.) as legality entries only — no Pokedex/Species data. Without the patch,
-// `dex.species.get('clefablemega')` returns an empty Species and the calc has
-// no stats, types, or abilities to work with.
-const champData: ModData = {
-  ...(champions as ModData),
-  Species: {
-    ...((champions as ModData).Species ?? {}),
-    ...championsMegaSpeciesPatch,
-  },
-}
-const dex = Dex.mod('champions' as ID, champData)
+const dex = Dex.mod('champions' as ID, champions as ModData)
 
 // Fold our typed SPECIES_ALIASES map into the dex's alias table so
 // `dex.species.get(alias)` honours the same mappings consumers get from
@@ -86,18 +75,26 @@ export const getItem = (name: string): Item => dex.items.get(name)
 export const getMoveName = (id: string): string | undefined =>
   dex.moves.get(id)?.name
 
+// Champions bans moves at the move level via isNonstandard. The mod overrides
+// some species' learnsets but not all (Floette, Annihilape, Pyroar, Eelektross,
+// …) — those inherit Gen 9 vanilla data and still surface Past moves like
+// Tera Blast / Hidden Power in their raw learnset. Filter at the helper layer
+// so both global and per-species move pools agree with the format ruleset.
+const isFormatLegalMoveId = (id: string): boolean =>
+  !dex.data.Moves?.[id]?.isNonstandard
+
 export const getAbilitiesOf = (speciesName: string): string[] =>
   Object.values(getSpecies(speciesName).abilities)
 
 // Threshold separating "additive delta" formes (Rotom appliance: 1 move each)
 // from "standalone learnset" formes (Alolan/Galarian/Hisuian/Paldean variants
-// and gender forms: 41+ moves each). The Champions dex has no entries in
-// between, so any low value safely partitions; 5 leaves margin for future
-// additive formes that carry a handful of signature moves.
+// and gender forms: 41+ moves each). Gen 9 has no entries in between, so any
+// low value safely partitions; 5 leaves margin for future additive formes
+// that carry a handful of signature moves.
 const ADDITIVE_FORME_LEARNSET_MAX = 5
 
-// Return the effective learnset for a species. The Champions dex stores
-// formes in three distinct shapes:
+// Return the effective learnset for a species. Gen 9 stores formes in three
+// distinct shapes:
 //   - Empty own (megas, Origin, battle-only formes like Cramorant-Gulping):
 //     learnset comes entirely from the base species.
 //   - Tiny own (Rotom-Wash/Heat/Frost/Fan/Mow — 1 signature move each):
@@ -108,43 +105,61 @@ const ADDITIVE_FORME_LEARNSET_MAX = 5
 // Without this routing, per-species schemas built off `species.id` directly
 // would either degrade to an empty union (megas) or to a one-move union
 // (Rotom forms), rejecting most legal spreads on those forms.
+// Battle-only formes (Megas, Primal Reversion, Zen Mode, Tatsugiri-Mega …)
+// carry a `battleOnly` pointer to the specific forme they revert to outside
+// battle. When upstream sets `baseSpecies` to the generic species but
+// `battleOnly` to a specific forme (Floette-Mega → Floette-Eternal,
+// Meowstic-F-Mega → Meowstic-F), the learnset lives on the specific forme;
+// walking via `baseSpecies` would land on the wrong (often empty) pool. Prefer
+// `battleOnly` when present; array form (Zygarde-Mega) picks the first.
+const baseFormeForLearnset = (species: Species): string | undefined => {
+  const bo = species.battleOnly
+  const fromBattleOnly = Array.isArray(bo) ? bo[0] : bo
+  return fromBattleOnly ?? species.baseSpecies
+}
+
+const filterFormatLegal = (
+  learnset: Record<string, string[]>,
+): Record<string, string[]> =>
+  Object.fromEntries(
+    Object.entries(learnset).filter(([id]) => isFormatLegalMoveId(id)),
+  )
+
 export const effectiveLearnset = (
   species: Species,
 ): Record<string, string[]> => {
   const own = dex.data.Learnsets?.[species.id]?.learnset ?? {}
   const isAdditiveForme = Object.keys(own).length < ADDITIVE_FORME_LEARNSET_MAX
-  if (
-    isAdditiveForme &&
-    species.baseSpecies &&
-    species.baseSpecies !== species.name
-  ) {
-    const baseId = dex.species.get(species.baseSpecies)?.id
+  const base = baseFormeForLearnset(species)
+  if (isAdditiveForme && base && base !== species.name) {
+    const baseId = dex.species.get(base)?.id
     if (baseId) {
-      const base = dex.data.Learnsets?.[baseId]?.learnset ?? {}
-      return { ...base, ...own }
+      const baseLearnset = dex.data.Learnsets?.[baseId]?.learnset ?? {}
+      return filterFormatLegal({ ...baseLearnset, ...own })
     }
   }
-  return own
+  return filterFormatLegal(own)
 }
 
-// Returns moves from the species's OWN learnset only — NOT the effective
-// learnset. Used for computing the global legal-move pool. Walking to base
-// (as effectiveLearnset does) would leak moves from non-legal base species
-// (e.g. Hidden Power from base Floette, surfaced via Floette-Mega).
+const learnsetMoveNames = (learnset: Record<string, string[]>): string[] =>
+  Object.keys(learnset)
+    .filter(isFormatLegalMoveId)
+    .map((id) => getMoveName(id))
+    .filter((n): n is string => n != null)
+
+// Moves from the species's OWN learnset, filtered to format-legal moves.
+// Used to build the global legal-move pool — narrower than effective because
+// it doesn't fold base-forme moves onto the species (e.g. Floette-Mega's own
+// pool is empty and contributes nothing).
 export const getOwnMoveNamesOf = (speciesName: string): string[] => {
   const id = getSpecies(speciesName)?.id
   const learnset = id ? (dex.data.Learnsets?.[id]?.learnset ?? {}) : {}
-  return Object.keys(learnset)
-    .map((id) => getMoveName(id))
-    .filter((n): n is string => n != null)
+  return learnsetMoveNames(learnset)
 }
 
-// Returns moves from the species's effective learnset (walks to base for
-// additive/empty-own formes). Used for per-species move validation, where a
-// mega should be allowed any move its base form learns.
-export const getEffectiveMoveNamesOf = (speciesName: string): string[] => {
-  const learnset = effectiveLearnset(getSpecies(speciesName))
-  return Object.keys(learnset)
-    .map((id) => getMoveName(id))
-    .filter((n): n is string => n != null)
-}
+// Moves from the species's effective learnset (walks to battleOnly/base for
+// additive or empty-own formes), filtered to format-legal moves. Used for
+// per-species move validation: a mega should be allowed any move its real
+// base form learns.
+export const getEffectiveMoveNamesOf = (speciesName: string): string[] =>
+  learnsetMoveNames(effectiveLearnset(getSpecies(speciesName)))

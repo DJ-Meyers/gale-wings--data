@@ -19,6 +19,68 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.0.0
+
+- **VGC 2026 Regulation Set M-B.** Adds `vgc2026_MB` as a sibling export of
+  `vgc2026_MA` and re-points `currentRegulation` at it. M-B is a strict
+  superset of M-A — every M-A species/item stays legal, plus 33 new species
+  (19 new bare forms: Annihilape, Barbaracle, Blaziken, Dragalge, Eelektross,
+  Falinks, Gholdengo, Grimmsnarl, Houndstone, Malamar, Mawile, Metagross,
+  Overqwil, Pyroar, Sceptile, Scolipede, Scrafty, Staraptor, Swampert + 14
+  new Megas), 15 newly-legal general items (Big Root, Damp/Heat/Icy/Smooth
+  Rock, Expert Belt, Iron Ball, Life Orb, Light Clay, Metronome, Muscle Band,
+  Shed Shell, Wide Lens, Wise Glasses, Zoom Lens), and 15 new Mega stones
+  (Sceptilite, Blazikenite, Swampertite, Mawilite, Metagrossite, Raichunite
+  X/Y, Staraptite, Scolipite, Scraftinite, Pyroarite, Malamarite, Barbaracite,
+  Dragalgite, Falinksite). 30 curated species defaults added on top of M-A's
+  73. Global alias maps (`species-aliases.ts`, `item-aliases.ts`) extended
+  with the M-B CSV rows. **Breaking:** anything inferred off
+  `currentRegulation.legalSpecies` / `.legalItems` now widens to the M-B
+  literal unions (`Vgc2026_MBSpecies` / `Vgc2026_MBItem`). Consumers typed
+  against `Vgc2026_MASpecies` / `…MAItem` directly continue to compile —
+  both regulations remain exported and the `regulations` registry now keys
+  both ids. The single point of change is still
+  `data/src/constants/champions/regulation/index.ts`.
+- **Upstream catch-up: bumps + drop `mega-species-patch.ts`.** `@smogon/calc`
+  0.10.0 → 0.11.0, `@pkmn/{data,dex,mods}` 0.10.9 → 0.10.10, and
+  `smogon/sprites` SHA pin advanced to `32a4c59…`. `@pkmn/mods/champions`
+  0.10.10 now ships Pokedex/Species data for all 34 Champions Megas (the
+  24 carried in M-A + the 10 added in M-B), so the local patch table is
+  gone and `dex.species.get('pyroarmega'|'raichumegax'|'floettemega'|…)`
+  resolves natively. The new sprite SHA fills sprite entries for the 10
+  M-B Champions-custom Megas; the drift test now asserts every legal mega
+  in `currentRegulation` has a sprite, with no per-mega carve-outs.
+  Two Champions-new abilities the calc still doesn't know (`Fire Mane` on
+  Pyroar-Mega, `Eelevate` on Eelektross) continue to be stubbed with the
+  forme's forced ability (Rivalry / Levitate) until upstream catches up.
+- **Mega defaults: ability fields stripped.** `Raichu-Mega-X` /
+  `Raichu-Mega-Y` no longer carry an explicit `ability` field in
+  `vgc2026_MBDefaults`. The forme has a single forced ability and
+  `dex.attachDefaults` falls back to `species.abilities[0]` for those rows,
+  matching the CSV convention every other mega already followed.
+- **Battle-only learnset walk.** `effectiveLearnset` now prefers
+  `species.battleOnly` over `species.baseSpecies` when walking up for
+  additive/empty-own formes. Upstream `@pkmn/mods/champions` 0.10.10 sets
+  `Floette-Mega.baseSpecies = 'Floette'` (generic) but
+  `battleOnly = 'Floette-Eternal'` (the actual mega-stone holder); the
+  walk now lands on Floette-Eternal's pool, so Light of Ruin remains
+  legal on Floette-Mega via the per-species schema. Same fix covers
+  Meowstic-F-Mega → Meowstic-F, plus Zygarde-Mega, Magearna-Original-Mega,
+  and the two Tatsugiri-Mega formes (none currently in M-B legal pool,
+  but the routing is correct if they ever land in a future regulation).
+  Array-valued `battleOnly` (Zygarde-Mega) picks the first entry.
+- **Format-illegal moves filtered out of learnsets.** `effectiveLearnset`,
+  `getOwnMoveNamesOf`, and `getEffectiveMoveNamesOf` now drop move IDs
+  whose `Moves[id].isNonstandard` is truthy ('Past', 'Future', 'CAP',
+  'Custom', 'Gigantamax', 'LGPE'). The Champions mod bans Hidden Power,
+  Tera Blast, Happy Hour, and ~400 other moves at the move level via
+  `isNonstandard:'Past'`, but only trims them out of the per-species
+  Learnsets table for species explicitly overridden by the mod. Species
+  that inherit Gen 9 vanilla learnsets (Floette, Annihilape, Pyroar,
+  Eelektross, Sceptile, Blaziken, Gholdengo, …) were leaking these moves
+  into both the global `championsMovesSchema` pool and per-species move
+  validation. Global `legalMoves` count drops 595 → 490 under M-B.
+
 ### 1.6.0
 
 - **`/test-fixtures` subpath export.** Adds `PARSE_CORPUS`, a shared

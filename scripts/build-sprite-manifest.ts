@@ -64,9 +64,17 @@ const dirContents = await fetchJson<GhContentEntry[]>(
   ghHeaders,
 )
 
+// Filter out shiny variants (`-s.png`) and gender variants (`-f.png`, `-m.png`).
+// Variant sprites share their base species's sid and have no own species.json
+// entry — surfacing them as orphans would mis-trip the coverage check below.
 const availableSids = new Set(
   dirContents
-    .filter((f) => f.type === 'file' && f.name.endsWith('.png') && !f.name.includes('-s.'))
+    .filter(
+      (f) =>
+        f.type === 'file' &&
+        f.name.endsWith('.png') &&
+        !/-(?:s|f|m)\.png$/.test(f.name),
+    )
     .map((f) => f.name.replace('.png', '')),
 )
 if (availableSids.size === 0) {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { regulationSchema } from '~/schemas/champions/regulation'
 import type { Regulation } from '~/types/champions/regulation'
-import { currentRegulation, regulations, vgc2026_MA } from './index'
+import { currentRegulation, regulations, vgc2026_MA, vgc2026_MB } from './index'
 
 describe('vgc2026_MA regulation', () => {
   it('should satisfy the regulation schema', () => {
@@ -97,17 +97,108 @@ describe('vgc2026_MA speciesDefaults', () => {
   })
 })
 
+describe('vgc2026_MB regulation', () => {
+  it('should satisfy the regulation schema', () => {
+    expect(() => regulationSchema.parse(vgc2026_MB)).not.toThrow()
+  })
+
+  it('should have the expected id and name', () => {
+    expect(vgc2026_MB.id).toBe('vgc2026_MB')
+    expect(vgc2026_MB.name).toBe('VGC 2026 Regulation Set M-B')
+  })
+
+  it('should only legalise mega-evolution', () => {
+    expect(vgc2026_MB.legalMechanics).toEqual(['mega-evolution'])
+  })
+
+  it('should have sorted, unique legal species and items', () => {
+    const speciesSorted = [...vgc2026_MB.legalSpecies].toSorted()
+    const itemsSorted = [...vgc2026_MB.legalItems].toSorted()
+    expect([...vgc2026_MB.legalSpecies]).toEqual(speciesSorted)
+    expect([...vgc2026_MB.legalItems]).toEqual(itemsSorted)
+    expect(new Set(vgc2026_MB.legalSpecies).size).toBe(
+      vgc2026_MB.legalSpecies.length,
+    )
+    expect(new Set(vgc2026_MB.legalItems).size).toBe(
+      vgc2026_MB.legalItems.length,
+    )
+  })
+
+  it('should preserve literal-union typing through destructuring', () => {
+    const { legalSpecies, legalItems } = vgc2026_MB
+    const _species: 'Annihilape' = legalSpecies.includes('Annihilape' as never)
+      ? 'Annihilape'
+      : 'Annihilape'
+    const _item: 'Raichunite X' = legalItems.includes('Raichunite X' as never)
+      ? 'Raichunite X'
+      : 'Raichunite X'
+    expect(_species).toBe('Annihilape')
+    expect(_item).toBe('Raichunite X')
+  })
+
+  it('should be a superset of vgc2026_MA legal species', () => {
+    const mbSpecies = new Set<string>(vgc2026_MB.legalSpecies)
+    for (const species of vgc2026_MA.legalSpecies) {
+      expect(mbSpecies.has(species)).toBe(true)
+    }
+  })
+
+  it('should be a superset of vgc2026_MA legal items', () => {
+    const mbItems = new Set<string>(vgc2026_MB.legalItems)
+    for (const item of vgc2026_MA.legalItems) {
+      expect(mbItems.has(item)).toBe(true)
+    }
+  })
+})
+
+describe('vgc2026_MB speciesDefaults', () => {
+  it('should curate a known signature spread (Annihilape)', () => {
+    expect(vgc2026_MB.speciesDefaults.Annihilape).toEqual({
+      nature: 'Adamant',
+      move: 'Rage Fist',
+      ability: 'Defiant',
+    })
+  })
+
+  it('should curate a Champions-custom Mega default (Raichu-Mega-X)', () => {
+    // Megas omit `ability` — the dex layer falls back to the forme's single
+    // forced ability.
+    expect(vgc2026_MB.speciesDefaults['Raichu-Mega-X']).toEqual({
+      nature: 'Jolly',
+      move: 'Volt Tackle',
+    })
+  })
+
+  it('should only reference legal species', () => {
+    for (const key of Object.keys(vgc2026_MB.speciesDefaults)) {
+      expect(vgc2026_MB.legalSpecies).toContain(key)
+    }
+  })
+
+  it('should reject a defaults entry with an unknown nature', () => {
+    const bad = {
+      ...vgc2026_MB,
+      speciesDefaults: { Annihilape: { nature: 'Hyper', move: 'Rage Fist' } },
+    }
+    expect(() => regulationSchema.parse(bad)).toThrow()
+  })
+})
+
 describe('regulations registry', () => {
   it('should expose vgc2026_MA via the registry', () => {
     expect(regulations.vgc2026_MA).toBe(vgc2026_MA)
   })
 
-  it('should point currentRegulation at vgc2026_MA', () => {
-    expect(currentRegulation).toBe(vgc2026_MA)
+  it('should expose vgc2026_MB via the registry', () => {
+    expect(regulations.vgc2026_MB).toBe(vgc2026_MB)
+  })
+
+  it('should point currentRegulation at vgc2026_MB', () => {
+    expect(currentRegulation).toBe(vgc2026_MB)
   })
 
   it('should reject an unknown mechanic', () => {
-    const bad = { ...vgc2026_MA, legalMechanics: ['z-power'] }
+    const bad = { ...vgc2026_MB, legalMechanics: ['z-power'] }
     expect(() => regulationSchema.parse(bad)).toThrow()
   })
 })

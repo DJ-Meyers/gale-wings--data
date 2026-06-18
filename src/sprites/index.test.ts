@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { championsMegaSpeciesPatch } from '../constants/champions/mega-species-patch'
+import { currentRegulation } from '../constants/champions/regulation'
 import { getSpecies } from '../dex'
 import { getSpriteUrl, spriteManifest } from './index'
 
@@ -37,13 +37,12 @@ describe('getSpriteUrl', () => {
     expect(getSpriteUrl(getSpecies('Charizard-Mega-Y'))).toBeDefined()
   })
 
-  // Drift detection: every Champions-only Mega in the patch must have a
-  // sprite. A future patch that adds a species without refreshing the
+  // Drift detection: every legal Mega in the current regulation must have a
+  // sprite. A future regulation that adds a species without refreshing the
   // manifest fails CI immediately.
-  it('has a sprite for every Champions-only Mega in the patch', () => {
-    const missing = Object.values(championsMegaSpeciesPatch)
-      .map((s) => s?.name)
-      .filter((name): name is string => name != null)
+  it('has a sprite for every legal Mega in the current regulation', () => {
+    const missing = currentRegulation.legalSpecies
+      .filter((name) => name.includes('-Mega'))
       .filter((name) => !getSpriteUrl(name))
     expect(missing).toEqual([])
   })
