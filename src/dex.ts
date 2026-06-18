@@ -75,6 +75,14 @@ export const getItem = (name: string): Item => dex.items.get(name)
 export const getMoveName = (id: string): string | undefined =>
   dex.moves.get(id)?.name
 
+// Champions bans moves at the move level via isNonstandard. The mod overrides
+// some species' learnsets but not all (Floette, Annihilape, Pyroar, Eelektross,
+// …) — those inherit Gen 9 vanilla data and still surface Past moves like
+// Tera Blast / Hidden Power in their raw learnset. Filter at the helper layer
+// so both global and per-species move pools agree with the format ruleset.
+const isFormatLegalMoveId = (id: string): boolean =>
+  !dex.data.Moves?.[id]?.isNonstandard
+
 export const getAbilitiesOf = (speciesName: string): string[] =>
   Object.values(getSpecies(speciesName).abilities)
 
@@ -97,43 +105,61 @@ const ADDITIVE_FORME_LEARNSET_MAX = 5
 // Without this routing, per-species schemas built off `species.id` directly
 // would either degrade to an empty union (megas) or to a one-move union
 // (Rotom forms), rejecting most legal spreads on those forms.
+// Battle-only formes (Megas, Primal Reversion, Zen Mode, Tatsugiri-Mega …)
+// carry a `battleOnly` pointer to the specific forme they revert to outside
+// battle. When upstream sets `baseSpecies` to the generic species but
+// `battleOnly` to a specific forme (Floette-Mega → Floette-Eternal,
+// Meowstic-F-Mega → Meowstic-F), the learnset lives on the specific forme;
+// walking via `baseSpecies` would land on the wrong (often empty) pool. Prefer
+// `battleOnly` when present; array form (Zygarde-Mega) picks the first.
+const baseFormeForLearnset = (species: Species): string | undefined => {
+  const bo = species.battleOnly
+  const fromBattleOnly = Array.isArray(bo) ? bo[0] : bo
+  return fromBattleOnly ?? species.baseSpecies
+}
+
+const filterFormatLegal = (
+  learnset: Record<string, string[]>,
+): Record<string, string[]> =>
+  Object.fromEntries(
+    Object.entries(learnset).filter(([id]) => isFormatLegalMoveId(id)),
+  )
+
 export const effectiveLearnset = (
   species: Species,
 ): Record<string, string[]> => {
   const own = dex.data.Learnsets?.[species.id]?.learnset ?? {}
   const isAdditiveForme = Object.keys(own).length < ADDITIVE_FORME_LEARNSET_MAX
-  if (
-    isAdditiveForme &&
-    species.baseSpecies &&
-    species.baseSpecies !== species.name
-  ) {
-    const baseId = dex.species.get(species.baseSpecies)?.id
+  const base = baseFormeForLearnset(species)
+  if (isAdditiveForme && base && base !== species.name) {
+    const baseId = dex.species.get(base)?.id
     if (baseId) {
-      const base = dex.data.Learnsets?.[baseId]?.learnset ?? {}
-      return { ...base, ...own }
+      const baseLearnset = dex.data.Learnsets?.[baseId]?.learnset ?? {}
+      return filterFormatLegal({ ...baseLearnset, ...own })
     }
   }
-  return own
+  return filterFormatLegal(own)
 }
 
-// Returns moves from the species's OWN learnset only — NOT the effective
-// learnset. Used for computing the global legal-move pool. Walking to base
-// (as effectiveLearnset does) would leak moves from non-legal base species
-// (e.g. Hidden Power from base Floette, surfaced via Floette-Mega).
+const learnsetMoveNames = (learnset: Record<string, string[]>): string[] =>
+  Object.keys(learnset)
+    .filter(isFormatLegalMoveId)
+    .map((id) => getMoveName(id))
+    .filter((n): n is string => n != null)
+
+// Moves from the species's OWN learnset, filtered to format-legal moves.
+// Used to build the global legal-move pool — narrower than effective because
+// it doesn't fold base-forme moves onto the species (e.g. Floette-Mega's own
+// pool is empty and contributes nothing).
 export const getOwnMoveNamesOf = (speciesName: string): string[] => {
   const id = getSpecies(speciesName)?.id
   const learnset = id ? (dex.data.Learnsets?.[id]?.learnset ?? {}) : {}
-  return Object.keys(learnset)
-    .map((id) => getMoveName(id))
-    .filter((n): n is string => n != null)
+  return learnsetMoveNames(learnset)
 }
 
-// Returns moves from the species's effective learnset (walks to base for
-// additive/empty-own formes). Used for per-species move validation, where a
-// mega should be allowed any move its base form learns.
-export const getEffectiveMoveNamesOf = (speciesName: string): string[] => {
-  const learnset = effectiveLearnset(getSpecies(speciesName))
-  return Object.keys(learnset)
-    .map((id) => getMoveName(id))
-    .filter((n): n is string => n != null)
-}
+// Moves from the species's effective learnset (walks to battleOnly/base for
+// additive or empty-own formes), filtered to format-legal moves. Used for
+// per-species move validation: a mega should be allowed any move its real
+// base form learns.
+export const getEffectiveMoveNamesOf = (speciesName: string): string[] =>
+  learnsetMoveNames(effectiveLearnset(getSpecies(speciesName)))

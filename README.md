@@ -58,13 +58,28 @@ See `.github/workflows/publish.yml`.
   `vgc2026_MBDefaults`. The forme has a single forced ability and
   `dex.attachDefaults` falls back to `species.abilities[0]` for those rows,
   matching the CSV convention every other mega already followed.
-- **Floette-Mega / Meowstic-{F,M}-Mega `baseSpecies`.** The deleted patch
-  re-pointed Floette-Mega → Floette-Eternal and Meowstic-F-Mega →
-  Meowstic-F. Upstream sets both to the generic base (Floette / Meowstic),
-  so per-species schemas walk to the generic base's learnset.
-  **Behavior change:** Light of Ruin (Floette-Eternal-exclusive) is no
-  longer accepted on Floette-Mega via the schema; common moves like
-  Moonblast remain legal.
+- **Battle-only learnset walk.** `effectiveLearnset` now prefers
+  `species.battleOnly` over `species.baseSpecies` when walking up for
+  additive/empty-own formes. Upstream `@pkmn/mods/champions` 0.10.10 sets
+  `Floette-Mega.baseSpecies = 'Floette'` (generic) but
+  `battleOnly = 'Floette-Eternal'` (the actual mega-stone holder); the
+  walk now lands on Floette-Eternal's pool, so Light of Ruin remains
+  legal on Floette-Mega via the per-species schema. Same fix covers
+  Meowstic-F-Mega → Meowstic-F, plus Zygarde-Mega, Magearna-Original-Mega,
+  and the two Tatsugiri-Mega formes (none currently in M-B legal pool,
+  but the routing is correct if they ever land in a future regulation).
+  Array-valued `battleOnly` (Zygarde-Mega) picks the first entry.
+- **Format-illegal moves filtered out of learnsets.** `effectiveLearnset`,
+  `getOwnMoveNamesOf`, and `getEffectiveMoveNamesOf` now drop move IDs
+  whose `Moves[id].isNonstandard` is truthy ('Past', 'Future', 'CAP',
+  'Custom', 'Gigantamax', 'LGPE'). The Champions mod bans Hidden Power,
+  Tera Blast, Happy Hour, and ~400 other moves at the move level via
+  `isNonstandard:'Past'`, but only trims them out of the per-species
+  Learnsets table for species explicitly overridden by the mod. Species
+  that inherit Gen 9 vanilla learnsets (Floette, Annihilape, Pyroar,
+  Eelektross, Sceptile, Blaziken, Gholdengo, …) were leaking these moves
+  into both the global `championsMovesSchema` pool and per-species move
+  validation. Global `legalMoves` count drops 595 → 490 under M-B.
 
 ### 1.6.0
 

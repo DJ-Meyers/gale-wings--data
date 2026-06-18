@@ -43,6 +43,25 @@ describe('effectiveLearnset', () => {
     expect('aurorabeam' in learnset || 'icebeam' in learnset).toBe(true)
     expect('flamethrower' in learnset).toBe(false)
   })
+
+  it('should walk Floette-Mega via battleOnly (Floette-Eternal), not baseSpecies (Floette)', () => {
+    // Upstream @pkmn/mods/champions sets Floette-Mega.baseSpecies = 'Floette'
+    // but battleOnly = 'Floette-Eternal'. The Eternal form is the real
+    // mega-stone holder and owns Light of Ruin; regular Floette doesn't.
+    const mega = getSpecies('floettemega')
+    const learnset = effectiveLearnset(mega)
+    expect('lightofruin' in learnset).toBe(true)
+  })
+
+  it('should drop format-illegal moves (isNonstandard) from the effective learnset', () => {
+    // Champions marks Hidden Power / Tera Blast as isNonstandard:'Past'.
+    // Sceptile's raw learnset still lists Hidden Power (the mod doesn't
+    // override every species's learnset), so the helper must filter.
+    const sceptile = getSpecies('sceptile')
+    const learnset = effectiveLearnset(sceptile)
+    expect('hiddenpower' in learnset).toBe(false)
+    expect('terablast' in learnset).toBe(false)
+  })
 })
 
 describe('Champions Mega species', () => {
