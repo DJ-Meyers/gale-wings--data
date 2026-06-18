@@ -19,6 +19,22 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.0.1
+
+- **Berry aliases filtered to Champions-legal items.** `item-aliases.ts`
+  previously derived `"<X> Berry" → "<x>"` shorthands from the full
+  `allItemNames` upstream snapshot, which includes ~50 legacy/contest-only
+  berries (Gold, Bluk, Kee, Kelpsy, Pamtre, Pomeg, Wiki, …) flagged
+  `isNonstandard:'Past'` in `@pkmn/mods/champions`. The auto-derived aliases
+  were dead in practice (the items aren't legal in Champions) and one of
+  them collided with an M-B species shorthand: `Gold Berry → 'gold'`
+  shadowed `Gholdengo → 'Gold'`. Switched the derivation to
+  `currentRegulation.legalItems`, so only the 28 Champions-legal berries
+  get shorthand and the Gholdengo collision is resolved.
+- **Poison Barb shorthand: `barb` → `PBarb`.** Renamed to avoid colliding
+  with `Barbaracle → 'Barb'` (M-B species, parser order is item-before-
+  species so the species shorthand was silently dead).
+
 ### 2.0.0
 
 - **VGC 2026 Regulation Set M-B.** Adds `vgc2026_MB` as a sibling export of
