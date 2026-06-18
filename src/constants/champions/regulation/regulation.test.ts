@@ -149,6 +149,18 @@ describe('vgc2026_MB regulation', () => {
       expect(mbItems.has(item)).toBe(true)
     }
   })
+
+  // Regression guard: berry/item alias derivation walks legalItems, so any
+  // non-Champions berry that sneaks in here would re-introduce dead shorthands
+  // and re-open the Gold Berry → 'gold' / Gholdengo → 'Gold' collision class.
+  // These specific berries are flagged isNonstandard:'Past' in
+  // @pkmn/mods/champions and must stay out.
+  it.each(['Gold Berry', 'Bluk Berry', 'Kee Berry', 'Kelpsy Berry'])(
+    'should NOT include non-Champions berry %s in legalItems',
+    (name) => {
+      expect(vgc2026_MB.legalItems).not.toContain(name)
+    },
+  )
 })
 
 describe('vgc2026_MB speciesDefaults', () => {
