@@ -43,6 +43,43 @@ describe('berry shorthands', () => {
     expect(ITEM_ALIASES.get(toID('occa'))).toBe('Occa Berry')
     expect(ITEM_ALIASES.get(toID('yache'))).toBe('Yache Berry')
   })
+
+  // Regression guard: legacy/contest-only berries (Gold, Bluk, Kee, Kelpsy,
+  // Pamtre, …) are flagged isNonstandard:'Past' in @pkmn/mods/champions and
+  // are not in currentRegulation.legalItems. Their auto-derived shorthands
+  // used to leak in via the full allItemNames snapshot, and one of them
+  // (Gold Berry → 'gold') silently shadowed M-B's Gholdengo → 'Gold'. The
+  // derivation now reads legalItems, so non-Champions berries get no alias.
+  it.each(['gold', 'bluk', 'kee', 'kelpsy', 'pamtre'])(
+    'does NOT derive a shorthand for non-Champions berry (%s)',
+    (shorthand) => {
+      expect(ITEM_ALIASES.get(toID(shorthand))).toBeUndefined()
+    },
+  )
+
+  // Companion check on the source map: even if a future refactor changes
+  // how ITEM_ALIASES is built, the raw itemAliases table must not list a
+  // non-Champions berry as a canonical key. Catches accidental hand-edits.
+  it.each(['Gold Berry', 'Bluk Berry', 'Kee Berry'])(
+    'does NOT list non-Champions berry %s as a canonical key in itemAliases',
+    (name) => {
+      expect(name in itemAliases).toBe(false)
+    },
+  )
+})
+
+describe('Poison Barb alias', () => {
+  // M-B introduced Barbaracle (species alias 'Barb'). Item aliases run before
+  // species aliases in the parser, so the previous 'barb' shorthand for Poison
+  // Barb shadowed Barbaracle silently. Renamed to 'PBarb' to keep both
+  // shorthands discoverable.
+  it('resolves Poison Barb via PBarb', () => {
+    expect(ITEM_ALIASES.get(toID('PBarb'))).toBe('Poison Barb')
+  })
+
+  it('does NOT resolve Poison Barb via bare "barb" (reserved for Barbaracle)', () => {
+    expect(ITEM_ALIASES.get(toID('barb'))).toBeUndefined()
+  })
 })
 
 describe('field-condition aliases', () => {

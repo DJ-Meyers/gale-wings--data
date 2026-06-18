@@ -1,4 +1,4 @@
-import { allItemNames } from '~/constants/all-items'
+import { currentRegulation } from '~/constants/champions/regulation'
 import type { AllItemName } from '~/types/champions/regulation'
 
 // Hand-curated aliases for non-berry items. Berries are derived below.
@@ -30,7 +30,7 @@ const curatedItemAliases = {
   'Muscle Band': ['MBand'],
   'Mystic Water': ['MW'],
   'Never-Melt Ice': ['NMI'],
-  'Poison Barb': ['barb'],
+  'Poison Barb': ['PBarb'],
   'Shed Shell': ['SShell'],
   'Sharp Beak': ['beak'],
   'Silk Scarf': ['silk'],
@@ -42,13 +42,18 @@ const curatedItemAliases = {
   'Zoom Lens': ['ZLens', 'Zoom'],
 } as const satisfies Partial<Record<AllItemName, readonly string[]>>
 
-// Every "<Name> Berry" item gets its bare lowercase shorthand for free
-// ("Chople Berry" → "chople", "Lum Berry" → "lum"), derived from the item
-// snapshot so any berry added upstream picks up an alias automatically. The
-// generic "Berry" item is skipped (its shorthand would be empty).
+// Every Champions-legal "<Name> Berry" gets its bare lowercase shorthand for
+// free ("Chople Berry" → "chople", "Lum Berry" → "lum"). Derived from the
+// current regulation's legal items rather than the full upstream item
+// snapshot — the snapshot includes legacy/contest-only berries (Gold, Bluk,
+// Kee, Kelpsy, Pamtre, …) flagged isNonstandard:'Past' in @pkmn/mods/champions,
+// whose auto-derived aliases were dead in practice and collided with legitimate
+// species shorthands (e.g. Gold Berry → 'gold' shadowed Gholdengo → 'Gold').
+// The generic bare "Berry" item is not in legalItems, so it's filtered out
+// implicitly by the source list.
 const berryAliases = Object.fromEntries(
-  allItemNames
-    .filter((name) => name.endsWith(' Berry') && name !== 'Berry')
+  currentRegulation.legalItems
+    .filter((name) => name.endsWith(' Berry'))
     .map((name) => [name, [name.slice(0, -' Berry'.length).toLowerCase()]]),
 ) as Partial<Record<AllItemName, readonly string[]>>
 
