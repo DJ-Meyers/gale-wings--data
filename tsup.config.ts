@@ -9,6 +9,7 @@ export default defineConfig({
     'aliases/index': 'src/aliases/index.ts',
     'sprites/index': 'src/sprites/index.ts',
     'test-fixtures/index': 'src/test-fixtures/index.ts',
+    'calc/index': 'src/calc/index.ts',
   },
   format: ['esm'],
   dts: { tsconfig: 'tsconfig.build.json' },

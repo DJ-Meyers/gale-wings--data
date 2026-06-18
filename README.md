@@ -1,6 +1,6 @@
 # @dj-meyers/gale-wings
 
-Shared schemas, types, constants, and aliases for Gale Wings. Six entry points:
+Shared schemas, types, constants, and aliases for Gale Wings. Seven entry points:
 
 - `@dj-meyers/gale-wings/schemas` — zod schemas (runtime-validatable; source of truth)
 - `@dj-meyers/gale-wings/types` — domain types derived from the schemas via `z.infer`
@@ -8,6 +8,8 @@ Shared schemas, types, constants, and aliases for Gale Wings. Six entry points:
 - `@dj-meyers/gale-wings/dex` — regulation-aware `@pkmn/dex` accessors
 - `@dj-meyers/gale-wings/aliases` — strictly-typed species/move/item alias maps
 - `@dj-meyers/gale-wings/sprites` — `getSpriteUrl()` over a SHA-pinned `smogon/sprites` manifest
+- `@dj-meyers/gale-wings/calc` — `@smogon/calc` wrapper (`computeDamage`, `toCalcPokemon`,
+  `parsedPokemonToCalcSide`, condition registries) shared by every consumer that runs the calc
 
 Consumed by both `gale-wings--api` (server runtime + tRPC procedure inputs) and
 `gale-wings--client` (form schemas, types, client-side validation).
@@ -18,6 +20,40 @@ Published to GitHub Packages on push to `main` when `package.json` is bumped.
 See `.github/workflows/publish.yml`.
 
 ## Changelog
+
+### 2.1.0
+
+- **New `@dj-meyers/gale-wings/calc` subpath.** The damage-calc machinery
+  that lived in `gale-wings--client/app/{calc,utils,data}/` moves into the
+  data package so non-browser consumers (the Discord bot, future integrations)
+  can run the calc without porting the @smogon/calc wrapping. Exports:
+  - `computeDamage(attacker, defender, moveName, field, options?)` —
+    Champions-aware wrapper around `@smogon/calc`'s `calculate`. Hardcodes
+    `gameType: 'Doubles'` and `level: 50`. Returns `null` on unknown
+    species / move.
+  - `toCalcPokemon(pokemon, params, alliesFainted?)` — Champions Pokémon
+    → @smogon/calc Pokemon adapter, including the non-linear stat-point →
+    EV conversion and the Champions-mega items/species fall-throughs.
+  - `parsedPokemonToCalcSide(parsed)` — `ParsedPokemon` (parser output)
+    → `CalcSide` (calc input). Returns `null` when `species` or `ability`
+    is missing. Lets clients of the api parser feed `computeDamage` by
+    one path.
+  - `gen` (Gen 9, Champions-aware), `hasSpecies`, `toSmogonName`,
+    `toDisplayName`, `speciesOverride` — the Champions/@smogon/calc
+    species name mapping.
+  - `statPointToEv`, `statPointsToEvs` — non-linear stat-point conversion.
+  - `isSpreadMove`, `multiHitRange`, `defaultHits` — move-shape lookups.
+  - `conditionalBasePower`, `relevantConditions`, `MoveConditions`,
+    `ConditionId`, `ConditionControl` — the history-dependent move
+    registry (Last Respects, Rage Fist, doubling moves, base-power
+    overrides, multi-hit overrides).
+  - `computeCurHp`, `shouldActivateAbility`, `CalcSide`,
+    `ComputeDamageOptions`, `DamageCalcResult` — supporting types and
+    helpers exposed alongside `computeDamage`.
+
+  Additive; existing entry points unchanged. `@smogon/calc@^0.11.0` was
+  already a runtime dep of this package, so the move adds no new transitive
+  deps to consumers.
 
 ### 2.0.1
 
