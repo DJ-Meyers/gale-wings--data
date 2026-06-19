@@ -21,6 +21,18 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.1.1
+
+- **Bump `@pkmn/{dex,mods,data}` to `^0.10.11`.** Upstream `0.10.11` (2026-06-18)
+  resyncs the Champions-Mega ability tables from PS master. Before the bump,
+  10 species in VGC 2026 M-B's legal pool inherited the base species'
+  full ability table instead of their forced single-ability forme value —
+  affecting Barbaracle-Mega, Dragalge-Mega, Falinks-Mega, Malamar-Mega,
+  Pyroar-Mega, Raichu-Mega-X, Raichu-Mega-Y, Scolipede-Mega, Scrafty-Mega,
+  and Staraptor-Mega. `0.10.11` also adds the `Fire Mane` ability (Pyroar-Mega's
+  forced ability) to the bundled abilities table. No code changes in this
+  package; the fix flows entirely through the dependency bump.
+
 ### 2.1.0
 
 - **New `@dj-meyers/gale-wings/calc` subpath.** The damage-calc machinery

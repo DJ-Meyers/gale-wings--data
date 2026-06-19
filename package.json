@@ -1,6 +1,6 @@
 {
   "name": "@dj-meyers/gale-wings",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Shared schemas, types, constants, and aliases for Gale Wings (zod schemas, derived domain types, regulation data, and alias maps).",
   "private": false,
   "type": "module",
@@ -57,17 +57,17 @@
     "url": "git+https://github.com/DJ-Meyers/gale-wings--data.git"
   },
   "dependencies": {
-    "@pkmn/data": "^0.10.10",
-    "@pkmn/dex": "^0.10.10",
-    "@pkmn/mods": "^0.10.10",
+    "@pkmn/data": "^0.10.11",
+    "@pkmn/dex": "^0.10.11",
+    "@pkmn/mods": "^0.10.11",
     "@smogon/calc": "^0.11.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/node": "^22.10.0",
     "tsup": "^8.3.5",
     "tsx": "^4.20.3",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.18",
-    "@types/node": "^22.10.0"
+    "vitest": "^4.0.18"
   }
 }
