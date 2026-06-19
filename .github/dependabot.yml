@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "09:00"
+      timezone: Etc/UTC
+    groups:
+      pkmn:
+        patterns:
+          - "@pkmn/*"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
