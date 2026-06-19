@@ -31,9 +31,7 @@ See `.github/workflows/publish.yml`.
   Pyroar-Mega, Raichu-Mega-X, Raichu-Mega-Y, Scolipede-Mega, Scrafty-Mega,
   and Staraptor-Mega. `0.10.11` also adds the `Fire Mane` ability (Pyroar-Mega's
   forced ability) to the bundled abilities table. No code changes in this
-  package; the fix flows entirely through the dependency bump. Audit script
-  at `scripts/audit-abilities.mjs` confirms zero remaining drift across all
-  325 regulation species.
+  package; the fix flows entirely through the dependency bump.
 
 ### 2.1.0
 
