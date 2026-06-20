@@ -21,6 +21,16 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.1.2
+
+- **Add `Eelektross-Mega` + `Eelektrossite` to `vgc2026_MB`.** Eelektross is in
+  M-B's legal pool but its Mega form and mega stone were missing from
+  `legalSpecies` / `legalItems`, so the api parser's mega-shorthand builder
+  (which iterates `currentRegulation.legalSpecies`) never produced
+  `MEelektross` / `Eel-Mega` / `EelektrossM` / etc. — they fell through to
+  `prefixMatchSpecies` as unmatched tokens. Adds the two entries; no code
+  changes needed downstream.
+
 ### 2.1.1
 
 - **Bump `@pkmn/{dex,mods,data}` to `^0.10.11`.** Upstream `0.10.11` (2026-06-18)
