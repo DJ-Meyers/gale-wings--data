@@ -21,6 +21,17 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.2.0
+
+- **Add `isSingleTarget?: boolean` to `ParsedPokemon`.** The parser now
+  recognizes a `single target` (two-word) or `single-target` (hyphenated)
+  token on the attacker side and surfaces it on the parse result. Consumers
+  forward it into `computeDamage`'s existing `isSingleTarget` option, which
+  skips the 0.75× spread modifier on spread moves (Heat Wave, Earthquake,
+  Dazzling Gleam, …) — answering "what if this only hit one Pokémon". Mirrors
+  the Single Target toggle already in the sandbox UI; typing the keyword and
+  flipping the toggle now reach the calc by one path.
+
 ### 2.1.2
 
 - **Refactor `vgc2026_MB` to inherit from `vgc2026_MA`.** Champions formats
