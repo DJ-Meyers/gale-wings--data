@@ -21,6 +21,30 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.1.2
+
+- **Refactor `vgc2026_MB` to inherit from `vgc2026_MA`.** Champions formats
+  are additive — each regulation strictly extends the previous — so M-B now
+  spreads `vgc2026_MA.legalSpecies` / `legalItems` and appends a
+  `m_b_additions` delta of net new species/items. Future regulation diffs
+  surface as a short additions list rather than a full re-listed snapshot,
+  and items can no longer accidentally drop from M-B by being omitted from
+  a manually-maintained full list. Sorting + dedup are derived at module
+  load and remain asserted by `regulation.test.ts`; two new assertions check
+  `m_b_additions` itself is sorted and doesn't redeclare M-A entries.
+- **Add `Eelektross-Mega` + `Eelektrossite` to `m_b_additions`.** Eelektross
+  was legal in M-B but its Mega form and mega stone were omitted, so the api
+  parser's mega-shorthand builder (which iterates
+  `currentRegulation.legalSpecies`) never produced `MEelektross` / `Eel-Mega` /
+  `EelektrossM` / etc. — they fell through to `prefixMatchSpecies` as
+  unmatched tokens.
+- **Remove non-legal entries from `vgc2026_MA.legalSpecies`** (and M-B
+  inherits the removal): `Eiscue-Noice`, the four `Ogerpon-*-Tera` forms,
+  and `Terapagos-Terastal`. None are available in Champions; they survived
+  from an earlier copy-paste seed. Item lists in both regulations are
+  validated clean against
+  [Serebii's Champions items list](https://www.serebii.net/pokemonchampions/items.shtml).
+
 ### 2.1.1
 
 - **Bump `@pkmn/{dex,mods,data}` to `^0.10.11`.** Upstream `0.10.11` (2026-06-18)

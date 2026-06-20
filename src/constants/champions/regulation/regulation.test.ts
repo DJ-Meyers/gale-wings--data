@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { regulationSchema } from '~/schemas/champions/regulation'
 import type { Regulation } from '~/types/champions/regulation'
 import { currentRegulation, regulations, vgc2026_MA, vgc2026_MB } from './index'
+import { m_b_additions } from './vgc-2026-m-b'
 
 describe('vgc2026_MA regulation', () => {
   it('should satisfy the regulation schema', () => {
@@ -122,6 +123,22 @@ describe('vgc2026_MB regulation', () => {
     expect(new Set(vgc2026_MB.legalItems).size).toBe(
       vgc2026_MB.legalItems.length,
     )
+  })
+
+  it('should have sorted m_b_additions (source-of-truth delta)', () => {
+    expect([...m_b_additions.species]).toEqual(
+      [...m_b_additions.species].toSorted(),
+    )
+    expect([...m_b_additions.items]).toEqual(
+      [...m_b_additions.items].toSorted(),
+    )
+  })
+
+  it('should not duplicate M-A entries in m_b_additions', () => {
+    const maSpecies = new Set<string>(vgc2026_MA.legalSpecies)
+    const maItems = new Set<string>(vgc2026_MA.legalItems)
+    expect(m_b_additions.species.filter((s) => maSpecies.has(s))).toEqual([])
+    expect(m_b_additions.items.filter((i) => maItems.has(i))).toEqual([])
   })
 
   it('should preserve literal-union typing through destructuring', () => {
