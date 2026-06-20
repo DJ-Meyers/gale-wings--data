@@ -21,7 +21,19 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
-### 2.1.1
+### 2.1.3
+
+- **Refactor `vgc2026_MB` to inherit from `vgc2026_MA`.** Champions formats
+  are additive — each regulation strictly extends the previous — so M-B now
+  spreads `vgc2026_MA.legalSpecies` / `legalItems` and appends a
+  `m_b_additions` delta of net new species/items. Future regulation diffs
+  surface as a short additions list rather than a full re-listed snapshot,
+  and items can no longer accidentally drop from M-B by being omitted from
+  a manually-maintained full list (a `King's Rock` / `Eelektrossite`-style
+  regression). Sorting + dedup are derived at module load and remain
+  asserted by `regulation.test.ts`; two new assertions check
+  `m_b_additions` itself is sorted and doesn't redeclare M-A entries.
+  Net legal-pool output is identical — pure structural change.
 
 - **Bump `@pkmn/{dex,mods,data}` to `^0.10.11`.** Upstream `0.10.11` (2026-06-18)
   resyncs the Champions-Mega ability tables from PS master. Before the bump,
