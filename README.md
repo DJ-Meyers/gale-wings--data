@@ -23,13 +23,26 @@ See `.github/workflows/publish.yml`.
 
 ### 2.1.2
 
-- **Add `Eelektross-Mega` + `Eelektrossite` to `vgc2026_MB`.** Eelektross is in
-  M-B's legal pool but its Mega form and mega stone were missing from
-  `legalSpecies` / `legalItems`, so the api parser's mega-shorthand builder
-  (which iterates `currentRegulation.legalSpecies`) never produced
-  `MEelektross` / `Eel-Mega` / `EelektrossM` / etc. — they fell through to
-  `prefixMatchSpecies` as unmatched tokens. Adds the two entries; no code
-  changes needed downstream.
+Regulation data corrections — both VGC 2026 M-A and M-B legal pools had a
+handful of bad entries. Item validation against
+[Serebii's Champions items list](https://www.serebii.net/pokemonchampions/items.shtml)
+came up clean for both regulations after the additions below; species are not
+yet validated against an authoritative source.
+
+- **Add `Eelektross-Mega` + `Eelektrossite` to `vgc2026_MB`.** Eelektross was
+  legal in M-B but its Mega form and mega stone were omitted, so the api
+  parser's mega-shorthand builder (which iterates
+  `currentRegulation.legalSpecies`) never produced `MEelektross` / `Eel-Mega` /
+  `EelektrossM` / etc. — they fell through to `prefixMatchSpecies` as
+  unmatched tokens.
+- **Remove non-legal entries from `vgc2026_MA` and `vgc2026_MB` `legalSpecies`:**
+  - `Eiscue-Noice`
+  - `Ogerpon-Cornerstone-Tera`, `Ogerpon-Hearthflame-Tera`,
+    `Ogerpon-Teal-Tera`, `Ogerpon-Wellspring-Tera`
+  - `Terapagos-Terastal`
+
+  None of these are available in Champions; they survived from an earlier
+  copy-paste seed and were never trimmed.
 
 ### 2.1.1
 
