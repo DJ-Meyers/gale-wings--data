@@ -33,6 +33,11 @@ export interface ParsedPokemon {
    *  the move's own multihit range (e.g. Icicle Spear 2–5), enforced parser-side.
    *  Maps to @smogon/calc `Move({ hits })`. */
   hits?: number
+  /** Single-target marker, e.g. from a `single target` / `single-target` token.
+   *  Asks the calc to skip the 0.75× spread modifier on spread moves
+   *  (Heat Wave, Earthquake, Dazzling Gleam, …) — answering "what if this hit
+   *  only one Pokémon". Calc-side it routes to `computeDamage` options. */
+  isSingleTarget?: boolean
   /** Current HP as a percentage of max (0–100). Sourced from a "165/177"
    *  fraction or an "85%" token. Populated in both forms so HP-scaling moves
    *  (Eruption, Water Spout, Reversal/Flail) can read a single field; when
