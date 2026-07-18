@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { TYPES } from '~/constants/types'
 import { getSpecies } from '~/dex'
 import type { ChampionsSpecies } from '~/types/champions'
 import {
@@ -48,29 +49,10 @@ const championsPokemonSchema = (speciesName: ChampionsSpecies) => {
   })
 }
 
-const teraTypeSchema = z.literal([
-  '',
-  'Normal',
-  'Fire',
-  'Water',
-  'Grass',
-  'Electric',
-  'Ice',
-  'Fighting',
-  'Poison',
-  'Ground',
-  'Flying',
-  'Psychic',
-  'Bug',
-  'Rock',
-  'Ghost',
-  'Dragon',
-  'Dark',
-  'Steel',
-  'Fairy',
-  'Stellar',
-  '???',
-])
+// Derived from the canonical TYPES so it can't drift. '' means not
+// terastallized in this calc. The typeless '???' is intentionally excluded —
+// it's an edge-case type, never a real Tera type.
+const teraTypeSchema = z.literal(['', ...TYPES] as const)
 
 const statusSchema = z.literal(['', 'slp', 'psn', 'brn', 'frz', 'par', 'tox'])
 
