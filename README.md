@@ -21,6 +21,22 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 2.3.0
+
+- **Export a canonical `TYPES` / `PokemonType` from `./constants`.** The 18
+  damage types plus Stellar (excluding the legacy typeless `'???'`) now live in
+  one place instead of being re-listed per consumer. `teraTypeSchema` derives
+  its accepted values from `TYPES` (plus `''` for not-terastallized), so the
+  list can't drift, and the client can reuse `PokemonType` for type-name props
+  rather than narrowing `@smogon/calc`'s wider `TypeName` at each UI boundary.
+- **Export `TYPE_COLORS` / `typeColor` from `./constants`.** The standard
+  type-color palette (keyed exhaustively by `PokemonType`) and its lookup helper
+  move out of the client into the shared package, so any consumer renders
+  type-hued UI from one source of truth.
+- **`teraTypeSchema` no longer accepts `'???'`.** The typeless placeholder is an
+  edge-case type, never a real Tera type, so it's dropped from the Tera field's
+  accepted values.
+
 ### 2.2.0
 
 - **Add `isSingleTarget?: boolean` to `ParsedPokemon`.** The parser now
