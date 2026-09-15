@@ -1,13 +1,14 @@
-// Curated per-species / per-item accessors over the @pkmn/mods/champions dex.
-// The raw Dex instance is intentionally NOT exported — consumers go through
-// these helpers for per-entity lookups, and through `currentRegulation` (or a
-// named regulation) for legality questions. The mod is what trims learnsets
+// Curated per-species / per-item accessors over the Champions mod dex,
+// built from vendored Showdown data (src/vendor/champions — see meta.json
+// for the pinned smogon/pokemon-showdown SHA). The raw Dex instance is
+// intentionally NOT exported — consumers go through these helpers for
+// per-entity lookups, and through `currentRegulation` (or a named
+// regulation) for legality questions. The mod is what trims learnsets
 // to Champions-legal moves and pins forme metadata (e.g. Floette-Mega's
 // baseSpecies → Floette-Eternal); plain @pkmn/dex carries Champions Megas
 // natively now but still over-includes the moves Champions removes.
 
-import { Dex, type ID, type Item, type ModData, type Species } from '@pkmn/dex'
-import * as champions from '@pkmn/mods/champions'
+import { Dex, type ID, type Item, type Species } from '@pkmn/dex'
 
 import { SPECIES_ALIASES } from './aliases'
 import { currentRegulation } from './constants/champions/regulation'
@@ -15,8 +16,9 @@ import type {
   AllSpeciesName,
   SpeciesDefault,
 } from './types/champions/regulation'
+import { championsModData } from './vendor/champions'
 
-const dex = Dex.mod('champions' as ID, champions as ModData)
+const dex = Dex.mod('champions' as ID, championsModData)
 
 // Fold our typed SPECIES_ALIASES map into the dex's alias table so
 // `dex.species.get(alias)` honours the same mappings consumers get from

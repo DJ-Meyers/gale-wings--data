@@ -14,9 +14,6 @@ importers:
       '@pkmn/dex':
         specifier: ^0.10.11
         version: 0.10.11
-      '@pkmn/mods':
-        specifier: ^0.10.11
-        version: 0.10.11
       '@smogon/calc':
         specifier: ^0.11.0
         version: 0.11.0
@@ -393,9 +390,6 @@ packages:
 
   '@pkmn/dex@0.10.11':
     resolution: {integrity: sha512-htR2Etf3WCiu4k4ukmyYD94do97sTm9LfmxJ8tg2uuPGJsZ98ZZGlJFUZNltfXU0pO61ItiU6obRXTw05qipDQ==}
-
-  '@pkmn/mods@0.10.11':
-    resolution: {integrity: sha512-Ub1ND9Fz24PZySkCFSns5cU4bZKeMk+6B6zcg2F4FViOJLB+qtU5zv65zD7bfoe/cBIclki4vj5YZ+u0s04rIg==}
 
   '@pkmn/types@4.0.0':
     resolution: {integrity: sha512-gR2s/pxJYEegek1TtsYCQupNR3d5hMlcJFsiD+2LyfKr4tc+gETTql47tWLX5mFSbPcbXh7f4+7txlMIDoZx/g==}
@@ -1346,10 +1340,6 @@ snapshots:
       '@pkmn/types': 4.0.0
 
   '@pkmn/dex@0.10.11':
-    dependencies:
-      '@pkmn/dex-types': 0.10.11
-
-  '@pkmn/mods@0.10.11':
     dependencies:
       '@pkmn/dex-types': 0.10.11
 

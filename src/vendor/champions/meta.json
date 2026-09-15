@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-09-15T17:53:23.656Z",
+  "source": {
+    "repo": "smogon/pokemon-showdown",
+    "ref": "c23d2e942c9c0daadb13a7162a385bf78e3c9353",
+    "path": "data/mods/champions"
+  },
+  "sourceHashes": {
+    "abilities.ts": "190aaac4c42db374b750b86a9ecc8e7fe7de604d501d561083faf36f00b0b1cf",
+    "formats-data.ts": "a512b537a84574a324c250c6ff99ad60f0cf1e82420fdae60d4635eec8661e13",
+    "items.ts": "b39dafa66d136ebb1a8576367ced2c9f4519aa1c17d5d65c59b368ac15d7de77",
+    "learnsets.ts": "826d302703358260a1c4967e2bf8edd15f1fe7e0f664c8ab14aff734906cc9d0",
+    "moves.ts": "a69fb8a9abc9c370c3b1ef44c080c0cbd2796db0bda86b2312290f8d6863ed3d"
+  }
+}
