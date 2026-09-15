@@ -8,9 +8,12 @@ export {
   regulations,
   vgc2026_MA,
   vgc2026_MB,
+  vgc2026_MC,
   type RegulationId,
   type Vgc2026_MAItem,
   type Vgc2026_MASpecies,
   type Vgc2026_MBItem,
   type Vgc2026_MBSpecies,
+  type Vgc2026_MCItem,
+  type Vgc2026_MCSpecies,
 } from './champions/regulation'

@@ -21,7 +21,62 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
-### 2.3.0
+### 3.0.0
+
+- **VGC 2026 Regulation Set M-C.** Adds `vgc2026_MC` as a sibling export of
+  `vgc2026_MB` and re-points `currentRegulation` at it. M-C is a strict
+  superset of M-B — every M-B species/item stays legal, plus 35 new species
+  (29 new bare forms/formes: Rillaboom, Cinderace, Inteleon, Wigglytuff,
+  Persian, Persian-Alola, Mr. Mime, Swalot, Gogoat, Thievul, Toxtricity,
+  Toxtricity-Low-Key, Grapploct, Perrserker, Pincurchin, Indeedee,
+  Indeedee-F, Arboliva, all four Squawkabilly plumages, Mabosstiff, Pawmot,
+  Farfetch’d, Sirfetch’d, Salamence, Golisopod, Baxcalibur + 6 new Megas:
+  Salamence-Mega, Golisopod-Mega, Baxcalibur-Mega, Absol-Mega-Z,
+  Garchomp-Mega-Z, Lucario-Mega-Z), 12 newly-legal general items (Leek,
+  Rocky Helmet, Air Balloon, Red Card, Binding Band, Eject Button, Normal
+  Gem, Terrain Extender, Electric/Psychic/Misty/Grassy Seed), and 6 new
+  Mega stones (Salamencite, Golisopite, Baxcalibrite, Absolite Z,
+  Garchompite Z, Lucarionite Z). The delta is derived from the Showdown
+  "Add Champions Regulation M-C" commit (`812501ed`) at the vendored-data
+  pin — **Farfetch'd-Galar and Mr. Mime-Galar are NOT legal** (still
+  `isNonstandard:'Past'` upstream) despite early web reports. 19 curated
+  species defaults added on top of M-B's 95. **Breaking:** anything
+  inferred off `currentRegulation.legalSpecies` / `.legalItems` widens to
+  the M-C literal unions (`Vgc2026_MCSpecies` / `Vgc2026_MCItem`). All
+  three regulations remain exported and the `regulations` registry keys
+  all three ids; the single point of change is still
+  `data/src/constants/champions/regulation/index.ts`.
+- **Vendored Showdown champions data; `@pkmn/mods` dropped** (landed in the
+  parent commit, ships with this release). The stale `@pkmn/mods/champions`
+  dependency (0.10.11, pre-M-C) is replaced by JSON vendored from
+  `smogon/pokemon-showdown` at a pinned SHA (`c23d2e94`) via
+  `scripts/build-champions-data.ts` (`pnpm build:champions-data`). Dex.mod
+  consumes the same five tables the dex layer reads (abilities,
+  formats-data, items, learnsets, moves); sim-only tables and
+  function-valued battle callbacks are omitted. A drift test verifies
+  vendored provenance against the pin and warns when Showdown master moves
+  past it. The vendored learnsets already carry the M-C move un-flags
+  (Pyro Ball, Snipe Shot, Overdrive, Meteor Assault, Double Shock, Glaive
+  Rush) and grants (Wigglytuff Moonblast, Grapploct Storm Throw), and
+  contain zero Hidden Power / Tera Blast entries — both moves are rejected
+  again by `championsMovesSchema`.
+- **`mega-species-patch.ts` returns for the M-C Z-Megas.** The installed
+  `@pkmn/dex` (0.10.11) ships stale pre-release Legends Z-A abilities for
+  the new Megas; the patch overlays the corrected values from Showdown
+  master (`inherit: true`, ability-only — stats/types/weights verified
+  identical): Absol-Mega-Z → Sharpness, Golisopod-Mega → Tough Claws,
+  Garchomp-Mega-Z → Levitate, Baxcalibur-Mega → forced single Thermal
+  Exchange. Lucario-Mega-Z's real ability `Aura Guard` isn't in
+  `@smogon/calc` yet and is stubbed with Inner Focus until the calc
+  catches up. Salamence-Mega is official Gen 6 data — no patch.
+- **Alias updates.** Species aliases add the 19 M-C CSV rows (Rilla, Bax,
+  Mence, Sir, ZAbsol, LucZ, …). `Goat` retargets from Incineroar (easter
+  egg) to Gogoat — Incineroar keeps `Incin` / `Wolfe`; `Pawmo` / `Pawmi`
+  were dropped (real species, Pawmot's pre-evolutions) and Pawmot keeps
+  `Paw`. Item aliases add shorthands for the new general items (Helmet,
+  Balloon, RCard, BBand, Eject/EButton, NGem, Extender, E/P/M/GSeed);
+  bare `Gem` stays reserved for the move Power Gem. No stone aliases,
+  matching the M-B precedent.
 
 - **Export a canonical `TYPES` / `PokemonType` from `./constants`.** The 18
   damage types plus Stellar (excluding the legacy typeless `'???'`) now live in

@@ -1,12 +1,14 @@
 import { toID } from '@smogon/calc'
 import { describe, expect, it } from 'vitest'
 
+import { getSpecies } from '~/dex'
 import {
   FIELD_CONDITION_ALIASES,
   fieldConditionAliases,
   ITEM_ALIASES,
   itemAliases,
   moveAliases,
+  SPECIES_ALIASES,
   speciesAliases,
 } from './index'
 
@@ -79,6 +81,82 @@ describe('Poison Barb alias', () => {
 
   it('does NOT resolve Poison Barb via bare "barb" (reserved for Barbaracle)', () => {
     expect(ITEM_ALIASES.get(toID('barb'))).toBeUndefined()
+  })
+})
+
+describe('M-C species aliases', () => {
+  it.each([
+    ['Rilla', 'Rillaboom'],
+    ['Bax', 'Baxcalibur'],
+    ['Mence', 'Salamence'],
+    ['Sir', 'Sirfetch’d'],
+    ['ZAbsol', 'Absol-Mega-Z'],
+    ['LucZ', 'Lucario-Mega-Z'],
+    ['indd-f', 'Indeedee-F'],
+    ['Squawk', 'Squawkabilly'],
+  ] as const)('resolves %s to %s', (alias, canonical) => {
+    expect(SPECIES_ALIASES.get(toID(alias))).toBe(canonical)
+  })
+
+  // 'Goat' retargeted from Incineroar (easter-egg alias) to Gogoat in M-C.
+  // buildAliasMap overwrites silently on duplicate ids, so the Incineroar row
+  // must NOT keep 'GOAT' — these assertions fail loudly if it comes back.
+  it('resolves goat to Gogoat (retargeted from Incineroar)', () => {
+    expect(SPECIES_ALIASES.get(toID('goat'))).toBe('Gogoat')
+    expect(speciesAliases.Incineroar).not.toContain('GOAT')
+    expect(SPECIES_ALIASES.get(toID('incin'))).toBe('Incineroar')
+  })
+
+  // Pawmo and Pawmi are real species (Pawmot's pre-evolutions), so the CSV's
+  // proposed aliases were dropped; only 'Paw' survives.
+  it('resolves paw to Pawmot but leaves pawmo/pawmi unaliased', () => {
+    expect(SPECIES_ALIASES.get(toID('paw'))).toBe('Pawmot')
+    expect(SPECIES_ALIASES.get(toID('pawmo'))).toBeUndefined()
+    expect(SPECIES_ALIASES.get(toID('pawmi'))).toBeUndefined()
+  })
+})
+
+describe('Farfetch’d-line apostrophe forms', () => {
+  // The canonical dex names use the typographic apostrophe (U+2019). Users
+  // type the ASCII quote, and some pastes drop the apostrophe entirely —
+  // toID collapses all three input forms to the same id, so every layer
+  // keyed through toID resolves them identically.
+  it.each([
+    ["Farfetch'd"], // ASCII quote
+    ['Farfetch’d'], // U+2019
+    ['Farfetchd'], // no apostrophe
+  ])('resolves %s to canonical Farfetch’d via the dex', (form) => {
+    expect(getSpecies(form).name).toBe('Farfetch’d')
+  })
+
+  it.each([["Sirfetch'd"], ['Sirfetch’d'], ['Sirfetchd']])(
+    'resolves %s to canonical Sirfetch’d via the dex',
+    (form) => {
+      expect(getSpecies(form).name).toBe('Sirfetch’d')
+    },
+  )
+})
+
+describe('M-C item aliases', () => {
+  it.each([
+    ['Helmet', 'Rocky Helmet'],
+    ['Balloon', 'Air Balloon'],
+    ['RCard', 'Red Card'],
+    ['BBand', 'Binding Band'],
+    ['Eject', 'Eject Button'],
+    ['EButton', 'Eject Button'],
+    ['NGem', 'Normal Gem'],
+    ['Extender', 'Terrain Extender'],
+    ['ESeed', 'Electric Seed'],
+    ['PSeed', 'Psychic Seed'],
+    ['MSeed', 'Misty Seed'],
+    ['GSeed', 'Grassy Seed'],
+  ] as const)('resolves %s to %s', (alias, canonical) => {
+    expect(ITEM_ALIASES.get(toID(alias))).toBe(canonical)
+  })
+
+  it('does NOT alias bare "gem" (reserved for the move Power Gem)', () => {
+    expect(ITEM_ALIASES.get(toID('gem'))).toBeUndefined()
   })
 })
 
