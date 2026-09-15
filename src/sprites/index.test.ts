@@ -12,11 +12,11 @@ describe('getSpriteUrl', () => {
     'Meowstic-M-Mega',
     'Hawlucha-Mega',
   ])('resolves Champions-only Mega %s', (name) => {
-    expect(getSpriteUrl(name)).toMatch(/cdn\.jsdelivr\.net.*\/s\d+\.png$/)
+    expect(getSpriteUrl(name)).toMatch(/cdn\.jsdelivr\.net.*\/s[a-z0-9_]+(-o[a-z0-9_]+)?\.png$/)
   })
 
   it('routes Meowstic-Mega alias to female default', () => {
-    expect(getSpriteUrl('Meowstic-Mega')).toContain('s21699')
+    expect(getSpriteUrl('Meowstic-Mega')).toContain('smeowstic-of_mega')
   })
 
   it('routes KG alias to Kingambit', () => {
