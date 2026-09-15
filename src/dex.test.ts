@@ -2,7 +2,7 @@ import { toID } from '@smogon/calc'
 import { describe, expect, it } from 'vitest'
 
 import { SPECIES_ALIASES } from './aliases'
-import { vgc2026_MA } from './constants/champions/regulation'
+import { vgc2026_MA, vgc2026_MC } from './constants/champions/regulation'
 import { effectiveLearnset, getSpecies } from './dex'
 
 describe('effectiveLearnset', () => {
@@ -93,6 +93,65 @@ describe('Champions Mega species', () => {
   })
 })
 
+describe('M-C Mega species patch', () => {
+  // The installed @pkmn/dex (0.10.11) carries stale pre-release Z-A abilities
+  // for the M-C Z-Megas; mega-species-patch.ts overlays the corrected values
+  // from Showdown master at the vendored-data pin. Stats/types/weights were
+  // verified identical upstream and flow through unpatched.
+  it('should resolve Absol-Mega-Z as Dark/Ghost with Sharpness', () => {
+    const mega = getSpecies('absolmegaz')
+    expect(mega.exists).toBe(true)
+    expect(mega.types).toEqual(['Dark', 'Ghost'])
+    expect(mega.abilities).toEqual({ 0: 'Sharpness' })
+    expect(mega.baseStats).toEqual({
+      hp: 65,
+      atk: 154,
+      def: 60,
+      spa: 75,
+      spd: 60,
+      spe: 151,
+    })
+    expect(mega.requiredItem).toBe('Absolite Z')
+  })
+
+  it('should resolve Golisopod-Mega as Bug/Steel with Tough Claws', () => {
+    const mega = getSpecies('golisopodmega')
+    expect(mega.types).toEqual(['Bug', 'Steel'])
+    expect(mega.abilities).toEqual({ 0: 'Tough Claws' })
+    expect(mega.baseStats.def).toBe(175)
+  })
+
+  it('should resolve Baxcalibur-Mega with a single forced ability', () => {
+    // Installed dex copies base Baxcalibur's {0, H} table onto the forme;
+    // the patch restores the forced single ability so the defaults layer's
+    // single-ability fallback fires.
+    const mega = getSpecies('baxcaliburmega')
+    expect(mega.types).toEqual(['Dragon', 'Ice'])
+    expect(mega.abilities).toEqual({ 0: 'Thermal Exchange' })
+    expect(mega.baseStats.atk).toBe(175)
+  })
+
+  it('should resolve Garchomp-Mega-Z with Levitate', () => {
+    const mega = getSpecies('garchompmegaz')
+    expect(mega.types).toEqual(['Dragon'])
+    expect(mega.abilities).toEqual({ 0: 'Levitate' })
+  })
+
+  it('should stand in Inner Focus for Aura Guard on Lucario-Mega-Z', () => {
+    // Champions-new 'Aura Guard' isn't in @smogon/calc yet; the patch stubs
+    // Inner Focus until the calc catches up (see mega-species-patch.ts).
+    const mega = getSpecies('lucariomegaz')
+    expect(mega.abilities).toEqual({ 0: 'Inner Focus' })
+    expect(mega.baseStats.spa).toBe(164)
+  })
+
+  it('should leave official Gen 6 Salamence-Mega unpatched (Aerilate)', () => {
+    const mega = getSpecies('salamencemega')
+    expect(mega.abilities).toEqual({ 0: 'Aerilate' })
+    expect(mega.baseStats.def).toBe(130)
+  })
+})
+
 describe('Meowstic-Mega gender fallback', () => {
   // Upstream @pkmn/mods/champions aliases 'Meowstic-Mega' to the male form;
   // we override to the female form since the stats are identical and Floette/
@@ -130,6 +189,23 @@ describe('getSpecies defaults', () => {
     // Multi-ability species with no CSV entry → no fallback.
     expect(abomasnow.defaultAbility).toBeUndefined()
   })
+
+  it('should prefill an M-C species from the M-C defaults table (Rillaboom)', () => {
+    const rilla = getSpecies('Rillaboom')
+    expect(rilla.defaultNature).toBe('Adamant')
+    expect(rilla.defaultMove).toBe('Grassy Glide')
+    expect(rilla.defaultAbility).toBe('Grassy Surge')
+  })
+
+  it('should fall back to the patched forced ability for Baxcalibur-Mega', () => {
+    // The CSV leaves the mega row's ability blank; the single-ability
+    // fallback only fires because mega-species-patch.ts drops the stale
+    // hidden ability the installed dex copied from base Baxcalibur.
+    const mega = getSpecies('Baxcalibur-Mega')
+    expect(mega.defaultNature).toBe('Adamant')
+    expect(mega.defaultMove).toBe('Glaive Rush')
+    expect(mega.defaultAbility).toBe('Thermal Exchange')
+  })
 })
 
 describe('Champions megas legality', () => {
@@ -142,5 +218,16 @@ describe('Champions megas legality', () => {
     'Glimmora-Mega',
   ])('should list %s in vgc2026_MA.legalSpecies', (name) => {
     expect(vgc2026_MA.legalSpecies).toContain(name)
+  })
+
+  it.each([
+    'Salamence-Mega',
+    'Golisopod-Mega',
+    'Baxcalibur-Mega',
+    'Absol-Mega-Z',
+    'Garchomp-Mega-Z',
+    'Lucario-Mega-Z',
+  ])('should list %s in vgc2026_MC.legalSpecies', (name) => {
+    expect(vgc2026_MC.legalSpecies).toContain(name)
   })
 })

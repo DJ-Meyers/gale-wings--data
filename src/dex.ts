@@ -11,6 +11,7 @@
 import { Dex, type ID, type Item, type Species } from '@pkmn/dex'
 
 import { SPECIES_ALIASES } from './aliases'
+import { championsMegaSpeciesPatch } from './constants/champions/mega-species-patch'
 import { currentRegulation } from './constants/champions/regulation'
 import type {
   AllSpeciesName,
@@ -18,7 +19,14 @@ import type {
 } from './types/champions/regulation'
 import { championsModData } from './vendor/champions'
 
-const dex = Dex.mod('champions' as ID, championsModData)
+// The vendored tables carry no Species data (the upstream Champions mod has
+// no pokedex file), so species stats/abilities come straight from @pkmn/dex —
+// which is stale for the M-C Z-Megas. The patch overlays the corrected
+// abilities (see mega-species-patch.ts for provenance).
+const dex = Dex.mod('champions' as ID, {
+  ...championsModData,
+  Species: championsMegaSpeciesPatch,
+})
 
 // Fold our typed SPECIES_ALIASES map into the dex's alias table so
 // `dex.species.get(alias)` honours the same mappings consumers get from

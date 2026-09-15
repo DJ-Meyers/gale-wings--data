@@ -1,5 +1,6 @@
 import { vgc2026_MA } from './vgc-2026-m-a'
 import { vgc2026_MB } from './vgc-2026-m-b'
+import { vgc2026_MC } from './vgc-2026-m-c'
 
 export {
   vgc2026_MA,
@@ -11,15 +12,22 @@ export {
   vgc2026_MB,
   type Vgc2026_MBItem,
   type Vgc2026_MBSpecies,
-  vgc2026_MB as currentRegulation,
 } from './vgc-2026-m-b'
+
+export {
+  vgc2026_MC,
+  type Vgc2026_MCItem,
+  type Vgc2026_MCSpecies,
+  vgc2026_MC as currentRegulation,
+} from './vgc-2026-m-c'
 
 export const regulations = {
   vgc2026_MA,
   vgc2026_MB,
+  vgc2026_MC,
 } as const
 
 export type RegulationId = keyof typeof regulations
 
 // Single point of change when the next regulation goes live: re-point this at
-// the new sibling export (e.g. `vgc2026_MC`).
+// the new sibling export (e.g. `vgc2026_MD`).
