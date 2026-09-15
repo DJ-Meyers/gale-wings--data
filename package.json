@@ -43,6 +43,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "build:champions-data": "tsx scripts/build-champions-data.ts",
     "build:sprites": "tsx scripts/build-sprite-manifest.ts",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
@@ -59,7 +60,6 @@
   "dependencies": {
     "@pkmn/data": "^0.10.11",
     "@pkmn/dex": "^0.10.11",
-    "@pkmn/mods": "^0.10.11",
     "@smogon/calc": "^0.11.0",
     "zod": "^4.3.6"
   },
