@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-09-25T22:17:57.793Z",
+  "source": {
+    "repo": "smogon/pokemon-showdown",
+    "ref": "a5df8274e85b0889bf2a9b3422a08b39732374fc",
+    "tables": {
+      "Abilities": "data/mods/champions/abilities.ts",
+      "FormatsData": "data/mods/champions/formats-data.ts",
+      "Items": "data/mods/champions/items.ts",
+      "Learnsets": "data/mods/champions/learnsets.ts",
+      "Moves": "data/mods/champions/moves.ts",
+      "Pokedex": "data/pokedex.ts"
+    }
+  },
+  "sourceHashes": {
+    "data/mods/champions/abilities.ts": "86c3843d402f1ff7be276d8f2da08d6744b8a8822349560b300ddcfa9c1fbc52",
+    "data/mods/champions/formats-data.ts": "a512b537a84574a324c250c6ff99ad60f0cf1e82420fdae60d4635eec8661e13",
+    "data/mods/champions/items.ts": "b39dafa66d136ebb1a8576367ced2c9f4519aa1c17d5d65c59b368ac15d7de77",
+    "data/mods/champions/learnsets.ts": "826d302703358260a1c4967e2bf8edd15f1fe7e0f664c8ab14aff734906cc9d0",
+    "data/mods/champions/moves.ts": "e8f8d5adf374462e71f899ed91ef40a06cbd2a3eab96a51ea4980bfb4889bdac",
+    "data/pokedex.ts": "73048386b864be5aff093e9393acf32e8016299e9d7b76078bf5120b769e2fe0"
+  },
+  "installed": {
+    "@pkmn/mods": "0.10.11",
+    "@pkmn/dex": "0.10.11"
+  }
+}

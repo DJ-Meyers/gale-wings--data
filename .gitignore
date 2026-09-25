@@ -7,3 +7,6 @@ dist
 .env.*.local
 coverage
 *.tsbuildinfo
+
+# One-off generator for src/constants/champions/showdown-patch (kept local)
+scripts/build-showdown-patch.ts
