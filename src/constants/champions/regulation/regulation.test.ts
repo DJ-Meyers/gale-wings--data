@@ -2,8 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { regulationSchema } from '~/schemas/champions/regulation'
 import type { Regulation } from '~/types/champions/regulation'
-import { currentRegulation, regulations, vgc2026_MA, vgc2026_MB } from './index'
+import {
+  currentRegulation,
+  regulations,
+  vgc2026_MA,
+  vgc2026_MB,
+  vgc2026_MC,
+} from './index'
 import { m_b_additions } from './vgc-2026-m-b'
+import { m_c_additions } from './vgc-2026-m-c'
 
 describe('vgc2026_MA regulation', () => {
   it('should satisfy the regulation schema', () => {
@@ -213,6 +220,136 @@ describe('vgc2026_MB speciesDefaults', () => {
   })
 })
 
+describe('vgc2026_MC regulation', () => {
+  it('should satisfy the regulation schema', () => {
+    expect(() => regulationSchema.parse(vgc2026_MC)).not.toThrow()
+  })
+
+  it('should have the expected id and name', () => {
+    expect(vgc2026_MC.id).toBe('vgc2026_MC')
+    expect(vgc2026_MC.name).toBe('VGC 2026 Regulation Set M-C')
+  })
+
+  it('should only legalise mega-evolution', () => {
+    expect(vgc2026_MC.legalMechanics).toEqual(['mega-evolution'])
+  })
+
+  it('should have sorted, unique legal species and items', () => {
+    const speciesSorted = [...vgc2026_MC.legalSpecies].toSorted()
+    const itemsSorted = [...vgc2026_MC.legalItems].toSorted()
+    expect([...vgc2026_MC.legalSpecies]).toEqual(speciesSorted)
+    expect([...vgc2026_MC.legalItems]).toEqual(itemsSorted)
+    expect(new Set(vgc2026_MC.legalSpecies).size).toBe(
+      vgc2026_MC.legalSpecies.length,
+    )
+    expect(new Set(vgc2026_MC.legalItems).size).toBe(
+      vgc2026_MC.legalItems.length,
+    )
+  })
+
+  it('should have sorted m_c_additions (source-of-truth delta)', () => {
+    expect([...m_c_additions.species]).toEqual(
+      [...m_c_additions.species].toSorted(),
+    )
+    expect([...m_c_additions.items]).toEqual(
+      [...m_c_additions.items].toSorted(),
+    )
+  })
+
+  it('should not duplicate M-B entries in m_c_additions', () => {
+    const mbSpecies = new Set<string>(vgc2026_MB.legalSpecies)
+    const mbItems = new Set<string>(vgc2026_MB.legalItems)
+    expect(m_c_additions.species.filter((s) => mbSpecies.has(s))).toEqual([])
+    expect(m_c_additions.items.filter((i) => mbItems.has(i))).toEqual([])
+  })
+
+  it('should preserve literal-union typing through destructuring', () => {
+    const { legalSpecies, legalItems } = vgc2026_MC
+    const _species: 'Rillaboom' = legalSpecies.includes('Rillaboom' as never)
+      ? 'Rillaboom'
+      : 'Rillaboom'
+    const _item: 'Rocky Helmet' = legalItems.includes('Rocky Helmet' as never)
+      ? 'Rocky Helmet'
+      : 'Rocky Helmet'
+    expect(_species).toBe('Rillaboom')
+    expect(_item).toBe('Rocky Helmet')
+  })
+
+  it('should be a superset of vgc2026_MB legal species', () => {
+    const mcSpecies = new Set<string>(vgc2026_MC.legalSpecies)
+    for (const species of vgc2026_MB.legalSpecies) {
+      expect(mcSpecies.has(species)).toBe(true)
+    }
+  })
+
+  it('should be a superset of vgc2026_MB legal items', () => {
+    const mcItems = new Set<string>(vgc2026_MC.legalItems)
+    for (const item of vgc2026_MB.legalItems) {
+      expect(mcItems.has(item)).toBe(true)
+    }
+  })
+
+  // The dex-canonical spellings use the typographic apostrophe (U+2019) —
+  // an ASCII-quote literal would fail regulationSchema at parse time, and
+  // these guards keep a future re-type from sneaking one in.
+  it.each(['Farfetch’d', 'Sirfetch’d'])(
+    'should list %s with the U+2019 apostrophe',
+    (name) => {
+      expect(vgc2026_MC.legalSpecies).toContain(name)
+    },
+  )
+
+  // Confirmed NOT legal upstream (isNonstandard:'Past' at the pinned SHA),
+  // despite early web reports listing them in the M-C delta.
+  it.each(['Farfetch’d-Galar', 'Mr. Mime-Galar'])(
+    'should NOT include %s in legalSpecies',
+    (name) => {
+      expect(vgc2026_MC.legalSpecies).not.toContain(name)
+    },
+  )
+})
+
+describe('vgc2026_MC speciesDefaults', () => {
+  it('should curate a known signature spread (Rillaboom)', () => {
+    expect(vgc2026_MC.speciesDefaults.Rillaboom).toEqual({
+      nature: 'Adamant',
+      move: 'Grassy Glide',
+      ability: 'Grassy Surge',
+    })
+  })
+
+  it('should curate a Z-Mega default without an ability (Baxcalibur-Mega)', () => {
+    // Megas omit `ability` — the dex layer falls back to the forme's single
+    // forced ability (Thermal Exchange, via the showdown-patch Species overlay).
+    expect(vgc2026_MC.speciesDefaults['Baxcalibur-Mega']).toEqual({
+      nature: 'Adamant',
+      move: 'Glaive Rush',
+    })
+  })
+
+  it('should carry M-B defaults forward verbatim (Annihilape)', () => {
+    expect(vgc2026_MC.speciesDefaults.Annihilape).toEqual(
+      vgc2026_MB.speciesDefaults.Annihilape,
+    )
+  })
+
+  it('should only reference legal species', () => {
+    for (const key of Object.keys(vgc2026_MC.speciesDefaults)) {
+      expect(vgc2026_MC.legalSpecies).toContain(key)
+    }
+  })
+
+  it('should reject a defaults entry with an unknown nature', () => {
+    const bad = {
+      ...vgc2026_MC,
+      speciesDefaults: {
+        Rillaboom: { nature: 'Hyper', move: 'Grassy Glide' },
+      },
+    }
+    expect(() => regulationSchema.parse(bad)).toThrow()
+  })
+})
+
 describe('regulations registry', () => {
   it('should expose vgc2026_MA via the registry', () => {
     expect(regulations.vgc2026_MA).toBe(vgc2026_MA)
@@ -222,12 +359,16 @@ describe('regulations registry', () => {
     expect(regulations.vgc2026_MB).toBe(vgc2026_MB)
   })
 
-  it('should point currentRegulation at vgc2026_MB', () => {
-    expect(currentRegulation).toBe(vgc2026_MB)
+  it('should expose vgc2026_MC via the registry', () => {
+    expect(regulations.vgc2026_MC).toBe(vgc2026_MC)
+  })
+
+  it('should point currentRegulation at vgc2026_MC', () => {
+    expect(currentRegulation).toBe(vgc2026_MC)
   })
 
   it('should reject an unknown mechanic', () => {
-    const bad = { ...vgc2026_MB, legalMechanics: ['z-power'] }
+    const bad = { ...vgc2026_MC, legalMechanics: ['z-power'] }
     expect(() => regulationSchema.parse(bad)).toThrow()
   })
 })
