@@ -1,22 +1,50 @@
-// Curated per-species / per-item accessors over the @pkmn/mods/champions dex.
-// The raw Dex instance is intentionally NOT exported — consumers go through
-// these helpers for per-entity lookups, and through `currentRegulation` (or a
-// named regulation) for legality questions. The mod is what trims learnsets
-// to Champions-legal moves and pins forme metadata (e.g. Floette-Mega's
-// baseSpecies → Floette-Eternal); plain @pkmn/dex carries Champions Megas
-// natively now but still over-includes the moves Champions removes.
+// Curated per-species / per-item accessors over the @pkmn/mods/champions dex,
+// brought up to date with Showdown master by the generated delta in
+// constants/champions/showdown-patch (npm lags upstream by months; see that
+// directory's index.ts). The raw Dex instance is intentionally NOT
+// exported — consumers go through these helpers for per-entity lookups, and
+// through `currentRegulation` (or a named regulation) for legality questions.
+// The mod is what trims learnsets to Champions-legal moves and pins forme
+// metadata (e.g. Floette-Mega's baseSpecies → Floette-Eternal); plain
+// @pkmn/dex carries Champions Megas natively now but still over-includes the
+// moves Champions removes.
 
-import { Dex, type ID, type Item, type ModData, type Species } from '@pkmn/dex'
+import {
+  type Ability,
+  Dex,
+  type ID,
+  type Item,
+  type ModData,
+  type Move,
+  type Species,
+} from '@pkmn/dex'
 import * as champions from '@pkmn/mods/champions'
 
 import { SPECIES_ALIASES } from './aliases'
 import { currentRegulation } from './constants/champions/regulation'
+import {
+  applyLearnsetPatch,
+  learnsetPatch,
+  showdownPatch,
+} from './constants/champions/showdown-patch'
 import type {
   AllSpeciesName,
   SpeciesDefault,
 } from './types/champions/regulation'
 
-const dex = Dex.mod('champions' as ID, champions as ModData)
+// Patch entries replace the installed mod's entries at key level (Dex.mod
+// merges `inherit` entries over Gen 9 vanilla, so a replaced entry yields
+// exactly upstream's effective value). The mod ships no Species table; the
+// patch's Species overlay corrects @pkmn/dex's stale Champions Megas.
+const installed = champions as ModData
+const dex = Dex.mod('champions' as ID, {
+  ...installed,
+  Abilities: { ...installed.Abilities, ...showdownPatch.Abilities },
+  FormatsData: { ...installed.FormatsData, ...showdownPatch.FormatsData },
+  Items: { ...installed.Items, ...showdownPatch.Items },
+  Moves: { ...installed.Moves, ...showdownPatch.Moves },
+  Species: showdownPatch.Species,
+})
 
 // Fold our typed SPECIES_ALIASES map into the dex's alias table so
 // `dex.species.get(alias)` honours the same mappings consumers get from
@@ -37,6 +65,12 @@ dex.data.Aliases = {
 // dex.data.Learnsets below (and in effectiveLearnset) don't return undefined.
 // Makes this module async — consumers must await imports transitively.
 await dex.learnsets.get('venusaur')
+// Learnset overrides can't ride Dex.mod's shallow `inherit` merge, so the
+// patch's per-species deltas land on the primed table instead (copy-on-write;
+// nothing below has read a touched species yet, so no stale cache exists).
+const learnsets = dex.data.Learnsets
+if (!learnsets) throw new Error('Champions dex: Learnsets table did not prime')
+applyLearnsetPatch(learnsets, learnsetPatch)
 
 // Species returned by getSpecies, augmented with form-prefill defaults sourced
 // from `currentRegulation.speciesDefaults`. Fields are undefined when the
@@ -72,6 +106,8 @@ const attachDefaults = (species: Species): SpeciesWithDefaults => {
 export const getSpecies = (name: string): SpeciesWithDefaults =>
   attachDefaults(dex.species.get(name))
 export const getItem = (name: string): Item => dex.items.get(name)
+export const getMove = (name: string): Move => dex.moves.get(name)
+export const getAbility = (name: string): Ability => dex.abilities.get(name)
 export const getMoveName = (id: string): string | undefined =>
   dex.moves.get(id)?.name
 
