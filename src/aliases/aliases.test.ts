@@ -91,7 +91,10 @@ describe('M-C species aliases', () => {
     ['Mence', 'Salamence'],
     ['Sir', 'Sirfetch’d'],
     ['ZAbsol', 'Absol-Mega-Z'],
+    ['AbsolZ', 'Absol-Mega-Z'],
     ['LucZ', 'Lucario-Mega-Z'],
+    ['Zucario', 'Lucario-Mega-Z'],
+    ['Zarchomp', 'Garchomp-Mega-Z'],
     ['indd-f', 'Indeedee-F'],
     ['Squawk', 'Squawkabilly'],
   ] as const)('resolves %s to %s', (alias, canonical) => {
