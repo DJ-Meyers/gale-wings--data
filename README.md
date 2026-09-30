@@ -21,6 +21,13 @@ See `.github/workflows/publish.yml`.
 
 ## Changelog
 
+### 3.0.1
+
+- **`Zarchomp` alias for Garchomp-Mega-Z.** Completes the Z-Mega portmanteau
+  set alongside `Zucario` and `ZAbsol`. Garchomp-Mega-Z had no curated row
+  before; the mechanical forms (`ChompZ`, `Garchomp-Z`, `Mega Chomp Z`) are
+  produced by the api parser's mega-shorthand builder and need no alias.
+
 ### 3.0.0
 
 - **VGC 2026 Regulation Set M-C.** Adds `vgc2026_MC` as a sibling export of

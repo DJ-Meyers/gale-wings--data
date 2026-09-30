@@ -53,6 +53,7 @@ export const speciesAliases = {
   Feraligatr: ['Gator', 'gatr'],
   Froslass: ['Fross', 'Fros', 'Lass'],
   Garchomp: ['Chomp'],
+  'Garchomp-Mega-Z': ['Zarchomp'],
   Gardevoir: ['Gard', 'Garde'],
   Garganacl: ['Garg'],
   Gholdengo: ['Gold', 'Ghold'],
